@@ -10,6 +10,8 @@
 .classpath
 .properties
 
+heroku-settings.xml
+
 README.md
 
 
