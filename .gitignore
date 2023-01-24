@@ -2,13 +2,7 @@
 
 /src/main/resources/service_account.json
 /src/main/resources/
-
-/Fonts/
-
-
-/foreman-st docs/
-/Maven/
-/SpringCLI/
+/src/main/webapp/
 
 .idea/
 .settings
