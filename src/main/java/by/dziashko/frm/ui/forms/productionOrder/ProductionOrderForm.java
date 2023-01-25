@@ -41,7 +41,7 @@ public class ProductionOrderForm extends FormLayout {
     Binder<ProductionOrder> binder = new Binder<>(ProductionOrder.class);
     private ProductionOrder productionOrder;
 
-    public ProductionOrderForm(List<Seller> sellers) {
+    public ProductionOrderForm(List<Seller> responsiblePeople) {
         addClassName("contact-form");
 
         binder.bindInstanceFields(this);
@@ -58,7 +58,7 @@ public class ProductionOrderForm extends FormLayout {
         deadLineDatePicker.addValueChangeListener(e ->
                 setDeadLineDate(e.getValue().format( DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT) )));
 
-        seller.setItems(sellers);
+        seller.setItems(responsiblePeople);
         seller.setItemLabelGenerator(Seller::getName);
         VerticalLayout lyt = new VerticalLayout(seller, client, orderNumber, orderDatePicker, deadLineDatePicker,
                 createButtonsLayout());
@@ -125,7 +125,7 @@ public class ProductionOrderForm extends FormLayout {
 
     // Events
     public static abstract class OrderNameFormEvent extends ComponentEvent<ProductionOrderForm> {
-        private ProductionOrder productionOrder;
+        private final ProductionOrder productionOrder;
 
         protected OrderNameFormEvent(ProductionOrderForm source, ProductionOrder productionOrder) {
             super(source, false);

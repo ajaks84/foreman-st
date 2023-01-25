@@ -21,7 +21,6 @@ import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.i18n.LocaleChangeEvent;
 import com.vaadin.flow.i18n.LocaleChangeObserver;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.router.RouteAlias;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -49,7 +48,7 @@ public class ProductionOrderView extends VerticalLayout implements Serializable,
     TextField filterText = new TextField();
     ProductionOrderForm form;
     Checkbox checkbox = new Checkbox();
-    private static String TD = "<td style=\"border: 1px solid lightgrey; width: 33.3%; padding: 3px;\">";
+    private static final String TD = "<td style=\"border: 1px solid lightgrey; width: 33.3%; padding: 3px;\">";
 
     private final DateNormalizerService dateNormalizerService;
 

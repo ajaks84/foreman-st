@@ -1,7 +1,6 @@
-package by.dziashko.frm.backend.entity.productionOrder;
+package by.dziashko.frm.backend.entity.newProductionOrder;
 
 import by.dziashko.frm.backend.entity.AbstractEntity;
-
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
@@ -9,7 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Entity
-public class Seller extends AbstractEntity implements Cloneable{
+public class ResponsiblePerson extends AbstractEntity implements Cloneable{
 
     private String name = "";
 
@@ -17,12 +16,12 @@ public class Seller extends AbstractEntity implements Cloneable{
 
     private Integer phoneNumber;
 
-    @OneToMany(mappedBy = "seller", fetch = FetchType.EAGER)
-    private final List<ProductionOrder> productionOrders = new LinkedList<>();
+    @OneToMany(mappedBy = "responsiblePerson", fetch = FetchType.EAGER)
+    private final List<NewProductionOrder> newProductionOrders = new LinkedList<>();
 
-    public Seller() { }
+    public ResponsiblePerson() { }
 
-    public Seller(String name) {
+    public ResponsiblePerson(String name) {
         setName(name);
     }
 
@@ -34,8 +33,8 @@ public class Seller extends AbstractEntity implements Cloneable{
         this.name = name;
     }
 
-    public List<ProductionOrder> getOrderNames() {
-        return productionOrders;
+    public List<NewProductionOrder> getOrderNames() {
+        return newProductionOrders;
     }
 
     public String getLastName() {
