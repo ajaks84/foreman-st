@@ -1,7 +1,7 @@
 package by.dziashko.frm.ui.views.orders;
 
 import by.dziashko.frm.backend.entity.productionOrder.ProductionOrder;
-import by.dziashko.frm.backend.repo.ProductionOrderRepo;
+import by.dziashko.frm.backend.repo.productionOrder.ProductionOrderRepo;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

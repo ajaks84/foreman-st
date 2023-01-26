@@ -1,8 +1,8 @@
 package by.dziashko.frm.backend.service.productionOrder;
 
 import by.dziashko.frm.backend.entity.productionOrder.ProductionOrder;
-import by.dziashko.frm.backend.repo.ProductionOrderRepo;
-import by.dziashko.frm.backend.repo.SellerRepo;
+import by.dziashko.frm.backend.repo.productionOrder.ProductionOrderRepo;
+import by.dziashko.frm.backend.repo.productionOrder.SellerRepo;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,8 +12,8 @@ import java.util.logging.Logger;
 @Service
 public class ProductionOrderService {
     private static final Logger LOGGER = Logger.getLogger(ProductionOrderService.class.getName());
-    private ProductionOrderRepo productionOrderRepo;
-    private SellerRepo sellerRepo;
+    private final ProductionOrderRepo productionOrderRepo;
+    private final SellerRepo sellerRepo;
 
     public ProductionOrderService(ProductionOrderRepo productionOrderRepo, SellerRepo sellerRepo) {
         this.productionOrderRepo = productionOrderRepo;

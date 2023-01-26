@@ -1,7 +1,6 @@
 package by.dziashko.frm.backend.entity.newProductionOrder;
 
 import by.dziashko.frm.backend.entity.AbstractEntity;
-import by.dziashko.frm.backend.entity.productionOrder.ProductionOrder;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
@@ -10,7 +9,7 @@ import javax.validation.constraints.NotNull;
 @Entity
 public class NewProductionOrder extends AbstractEntity implements Cloneable {
 
-    public enum Readiness {Gotowe, Nie_gotowe, Wysłane}  // You better find out how to i18N enums....
+    public enum OrderStatus {Gotowe, Nie_gotowe, Wysłane}  // You better find out how to i18N enums....
 
     //public enum Readiness {Ready, NotReady, Sent}
 
@@ -62,7 +61,7 @@ public class NewProductionOrder extends AbstractEntity implements Cloneable {
     //10.
     @Enumerated(EnumType.STRING)
     @NotNull
-    private NewProductionOrder.Readiness orderReadiness;
+    private NewProductionOrder.OrderStatus orderStatus;
 
     //11.
     @NotNull
@@ -128,12 +127,12 @@ public class NewProductionOrder extends AbstractEntity implements Cloneable {
         this.orderDelay = orderDelay;
     }
 
-    public Readiness getOrderReadiness() {
-        return orderReadiness;
+    public OrderStatus getOrderReadiness() {
+        return orderStatus;
     }
 
-    public void setOrderReadiness(Readiness orderReadiness) {
-        this.orderReadiness = orderReadiness;
+    public void setOrderStatus(OrderStatus orderOrderStatus) {
+        this.orderStatus = orderOrderStatus;
     }
 
     public ResponsiblePerson getResponsiblePerson() {

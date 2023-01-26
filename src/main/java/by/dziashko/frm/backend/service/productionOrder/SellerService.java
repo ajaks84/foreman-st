@@ -1,7 +1,7 @@
 package by.dziashko.frm.backend.service.productionOrder;
 
 import by.dziashko.frm.backend.entity.productionOrder.Seller;
-import by.dziashko.frm.backend.repo.SellerRepo;
+import by.dziashko.frm.backend.repo.productionOrder.SellerRepo;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 public class SellerService {
 
     private static final Logger LOGGER = Logger.getLogger(SellerService.class.getName());
-    private SellerRepo sellerRepo;
+    private final SellerRepo sellerRepo;
 
     public SellerService(SellerRepo sellerRepo) {
         this.sellerRepo = sellerRepo;
@@ -41,7 +41,7 @@ public class SellerService {
 
     public void deleteAll(){
         sellerRepo.deleteAll();
-    };
+    }
 
     public Seller getByName(String name) {
         return sellerRepo.getByName(name);
