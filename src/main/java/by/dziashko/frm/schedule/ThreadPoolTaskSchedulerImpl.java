@@ -1,7 +1,9 @@
 package by.dziashko.frm.schedule;
 
+import by.dziashko.frm.backend.service.productionOrder.NewProductionOrderService;
 import by.dziashko.frm.backend.service.productionOrder.ProductionOrderService;
 import by.dziashko.frm.backend.service.utilities.GoogleSheetsReaderService;
+import by.dziashko.frm.backend.service.utilities.NewGoogleSheetsReaderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.support.PeriodicTrigger;
@@ -24,7 +26,13 @@ public class ThreadPoolTaskSchedulerImpl {
     private ProductionOrderService productionOrderService;
 
     @Autowired
+    private NewProductionOrderService newProductionOrderService;
+
+    @Autowired
     private GoogleSheetsReaderService googleSheetsReaderService;
+
+    @Autowired
+    private NewGoogleSheetsReaderService newGoogleSheetsReaderService;
 
     @PostConstruct
     public void scheduleRunnableWithPeriodicTrigger() {
@@ -33,7 +41,7 @@ public class ThreadPoolTaskSchedulerImpl {
 
     class RunnableTask implements Runnable {
 
-        private String message;
+        private final String message;
 
         public RunnableTask(String message) {
             this.message = message;
@@ -42,9 +50,13 @@ public class ThreadPoolTaskSchedulerImpl {
         @Override
         public void run() {
             productionOrderService.deleteAll();
+            newProductionOrderService.deleteAll();
+
             System.out.println("Runnable Task with " + message + " on thread " + Thread.currentThread().getName());
             try {
                 googleSheetsReaderService.getSheetsData();
+                newGoogleSheetsReaderService.getSheetsData();
+
             } catch (GeneralSecurityException e) {
                 e.printStackTrace();
             } catch (IOException e) {

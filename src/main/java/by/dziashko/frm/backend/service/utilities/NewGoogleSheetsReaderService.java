@@ -24,9 +24,11 @@ public class NewGoogleSheetsReaderService {
     private final DateNormalizerService dateNormalizerService;
     //final String sheetId_st = "1uCMkk9bvWX84sogpDoG3REINZEo5jx3eVQovgQZF9eo";  //Sant-Tech
     final String sheetId_st = "1jCYuZKFL0vGaPsTUbJ5dedgDLdhHwna722KsMBhyujs"; //Sant-Tech new
+
     String emptyMessage = "";
     String message = "brak danych";
-    final String range = "PLAN PRODUKCJI  !A2:AB";
+//    final String range = "Zlecenia !A2:M";
+    final String range = "A2:M";
 
     public NewGoogleSheetsReaderService(NewProductionOrderService newProductionOrderService,
                                         ResponsiblePersonService responsiblePersonService,
@@ -171,7 +173,8 @@ public class NewGoogleSheetsReaderService {
 
                         //Saving an order
                         try {
-                            newProductionOrderService.save(newProductionOrder);
+                            if (!(client =="")) {
+                            newProductionOrderService.save(newProductionOrder);}
                         } catch (Exception e) {
                             LOGGER.info("Coś poszło nie tak podczas pobierania danych z GoogleSheets... ");
                             e.printStackTrace();

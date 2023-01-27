@@ -1,10 +1,13 @@
 package by.dziashko.frm.ui.views.new_orders;
 
+import by.dziashko.frm.backend.entity.newProductionOrder.NewProductionOrder;
+import by.dziashko.frm.backend.entity.newProductionOrder.ResponsiblePerson;
 import by.dziashko.frm.backend.entity.productionOrder.ProductionOrder;
 import by.dziashko.frm.backend.entity.productionOrder.Seller;
-import by.dziashko.frm.backend.service.productionOrder.ProductionOrderService;
-import by.dziashko.frm.backend.service.productionOrder.SellerService;
+import by.dziashko.frm.backend.service.productionOrder.NewProductionOrderService;
+import by.dziashko.frm.backend.service.productionOrder.ResponsiblePersonService;
 import by.dziashko.frm.backend.service.utilities.DateNormalizerService;
+import by.dziashko.frm.ui.forms.newProductionOrder.NewProductionOrderForm;
 import by.dziashko.frm.ui.forms.productionOrder.ProductionOrderForm;
 import by.dziashko.frm.ui.views.main.MainView;
 import com.vaadin.flow.component.UI;
@@ -44,19 +47,21 @@ public class NewProductionOrderView extends VerticalLayout implements Serializab
 
     private static final long serialVersionUID = 6529685098267757699L;
 
-    ProductionOrderService productionOrderService;
-    SellerService sellerService;
-    Grid<ProductionOrder> grid = new Grid<>(ProductionOrder.class);
+    NewProductionOrderService newProductionOrderService;
+    ResponsiblePersonService responsiblePersonService;
+    Grid<NewProductionOrder> grid = new Grid<>(NewProductionOrder.class);
     TextField filterText = new TextField();
-    ProductionOrderForm form;
+    NewProductionOrderForm form;
     Checkbox checkbox = new Checkbox();
-    private static String TD = "<td style=\"border: 1px solid lightgrey; width: 33.3%; padding: 3px;\">";
+    private static final String TD = "<td style=\"border: 1px solid lightgrey; width: 33.3%; padding: 3px;\">";
 
     private final DateNormalizerService dateNormalizerService;
 
-    public NewProductionOrderView(ProductionOrderService productionOrderService, SellerService sellerService, DateNormalizerService dateNormalizerService) {
-        this.sellerService = sellerService;
-        this.productionOrderService = productionOrderService;
+    public NewProductionOrderView(NewProductionOrderService newProductionOrderService,
+                                  ResponsiblePersonService responsiblePersonService,
+                                  DateNormalizerService dateNormalizerService) {
+        this.responsiblePersonService = responsiblePersonService;
+        this.newProductionOrderService = newProductionOrderService;
         this.dateNormalizerService = dateNormalizerService;
 
         UI current = UI.getCurrent();
@@ -67,19 +72,19 @@ public class NewProductionOrderView extends VerticalLayout implements Serializab
         getToolbar();
         configureGrid();
 
-        form = new ProductionOrderForm(sellerService.findAll());
-        form.addListener(ProductionOrderForm.SaveEvent.class, this::saveProductionOrder);
-        form.addListener(ProductionOrderForm.DeleteEvent.class, this::deleteProductionOrder);
-        form.addListener(ProductionOrderForm.CloseEvent.class, e -> closeEditor());
+        form = new NewProductionOrderForm(responsiblePersonService.findAll());
+//        form.addListener(ProductionOrderForm.SaveEvent.class, this::saveProductionOrder);
+//        form.addListener(ProductionOrderForm.DeleteEvent.class, this::deleteProductionOrder);
+//        form.addListener(ProductionOrderForm.CloseEvent.class, e -> closeEditor());
 
         Div content = new Div(grid);
         content.addClassName("content");
         content.setSizeFull();
-
-        add(getToolbar(), content);
-        searchInList();
-        closeEditor();
-        filterList(true);
+        add(content);
+//        add(getToolbar(), content);
+//        searchInList();
+//        closeEditor();
+//        filterList(true);
     }
 
     private void configureGrid() {
@@ -87,109 +92,111 @@ public class NewProductionOrderView extends VerticalLayout implements Serializab
         grid.setSizeFull();
         grid.setColumns();
         grid.addColumn(orderName -> {
-            Seller seller = orderName.getSeller();
-            return seller == null ? "-" : seller.getName();
-        }).setHeader(getTranslation("Seller")).setSortable(true);
-        grid.addColumn(ProductionOrder::getClient).setHeader(getTranslation("Client"));
-        grid.addColumn(ProductionOrder::getProjectNumber).setHeader(getTranslation("Project_Number"));
-        grid.addColumn(ProductionOrder::getOrderNumber).setHeader(getTranslation("Order_Number"));
-        grid.addColumn(ProductionOrder::getOrderDate).setHeader(getTranslation("Order_Date"));
-        grid.addColumn(ProductionOrder::getOrderDeadLine).setHeader(getTranslation("Order_Deadline"));
-        grid.addColumn(productionOrder -> delayCalcReadiness(productionOrder.getOrderDeadLine(), productionOrder.getOrderReadiness()))
-                .setHeader(getTranslation("Order_Delay")).setKey("ordegridrCol");
-        grid.addColumn(ProductionOrder::getOrderReadiness).setHeader(getTranslation("Order_Readiness")).setSortable(true);
+            ResponsiblePerson responsiblePerson = orderName.getResponsiblePerson();
+            return responsiblePerson == null ? "-" : responsiblePerson.getName();
+        }).setHeader(getTranslation("ResponsiblePerson")).setSortable(true);
+        grid.addColumn(NewProductionOrder::getClient).setHeader(getTranslation("Client"));
+        grid.addColumn(NewProductionOrder::getProjectNumber).setHeader(getTranslation("Project_Number"));
+//        grid.addColumn(ProductionOrder::getOrderNumber).setHeader(getTranslation("Order_Number"));
+        grid.addColumn(NewProductionOrder::getOrderDate).setHeader(getTranslation("Order_Date"));
+        grid.addColumn(NewProductionOrder::getOrderDeadLine).setHeader(getTranslation("Order_Deadline"));
+//        grid.addColumn(productionOrder -> delayCalcReadiness(productionOrder.getOrderDeadLine(), productionOrder.getOrderReadiness()))
+//                .setHeader(getTranslation("Order_Delay")).setKey("ordegridrCol");
+//        grid.addColumn(ProductionOrder::getOrderReadiness).setHeader(getTranslation("Order_Readiness")).setSortable(true);
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
         grid.addItemClickListener(event -> navigateTo(event.getItem()));
-        grid.getColumnByKey("ordegridrCol").setClassNameGenerator(productionOrder -> {
-            if (!productionOrder.getOrderDeadLine().equals(" ")) {
-                return "warn";
-            }
-            return null;
-        });
+//        grid.getColumnByKey("ordegridrCol").setClassNameGenerator(productionOrder -> {
+//            if (!productionOrder.getOrderDeadLine().equals(" ")) {
+//                return "warn";
+//            }
+//            return null;
+//        });
+
+        grid.setItems(newProductionOrderService.findAll());
     }
 
     private HorizontalLayout getToolbar() {
-        filterText.setPlaceholder(getTranslation("Filter"));
-        filterText.setClearButtonVisible(true);
-        filterText.setValueChangeMode(ValueChangeMode.LAZY);
-        filterText.addValueChangeListener(e -> searchInList());
+//        filterText.setPlaceholder(getTranslation("Filter"));
+//        filterText.setClearButtonVisible(true);
+//        filterText.setValueChangeMode(ValueChangeMode.LAZY);
+//        filterText.addValueChangeListener(e -> searchInList());
 
-        Button addOrderButton = new Button(getTranslation("New_Order"));
-        addOrderButton.addClickListener(click -> addProductionOrder());
+//        Button addOrderButton = new Button(getTranslation("New_Order"));
+//        addOrderButton.addClickListener(click -> addProductionOrder());
 
-        checkbox.setLabel(getTranslation("Only_NOT_Ready_Orders"));
-        checkbox.setValue(true);
-        checkbox.addValueChangeListener(e -> filterList(e.getValue()));
+//        checkbox.setLabel(getTranslation("Only_NOT_Ready_Orders"));
+//        checkbox.setValue(true);
+//        checkbox.addValueChangeListener(e -> filterList(e.getValue()));
 
-        HorizontalLayout toolbar = new HorizontalLayout(filterText, checkbox, addOrderButton); //addOrderButton,
+        HorizontalLayout toolbar = new HorizontalLayout(filterText, checkbox); //addOrderButton,
         toolbar.addClassName("toolbar");
         return toolbar;
     }
 
-    private void searchInList() {
-        grid.setItems(productionOrderService.findAll(filterText.getValue()));
-    }
+//    private void searchInList() {
+//        grid.setItems(newProductionOrderService.findAll(filterText.getValue()));
+//    }
 
-    void addProductionOrder() {
-        grid.asSingleSelect().clear();
-        createNewProductionOrder(new ProductionOrder());
-    }
+//    void addProductionOrder() {
+//        grid.asSingleSelect().clear();
+//        createNewProductionOrder(new ProductionOrder());
+//    }
 
-    public void createNewProductionOrder(ProductionOrder productionOrder) {
-        if (productionOrder == null) {
-            closeEditor();
-        } else {
-            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-            User user = (User) authentication.getPrincipal();
-            Seller seller = sellerService.find(user.getUsername());
-            if (seller == null) {
-                seller = new Seller(user.getUsername());
-                sellerService.save(seller);
-            }
-            productionOrder.setSeller(seller);
-            productionOrder.setOrderDate(LocalDate.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)));
-            productionOrder.setOrderDeadLine(LocalDate.now().plusWeeks(6).format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)));
-            productionOrder.setOrderReadiness(ProductionOrder.Readiness.Nie_gotowe);
-            form.setProductionOrder(productionOrder);
-            form.setVisible(true);
-            addClassName("editing");
-        }
-    }
+//    public void createNewProductionOrder(ProductionOrder productionOrder) {
+//        if (productionOrder == null) {
+//            closeEditor();
+//        } else {
+//            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+//            User user = (User) authentication.getPrincipal();
+//            Seller seller = responsiblePersonService.find(user.getUsername());
+//            if (seller == null) {
+//                seller = new Seller(user.getUsername());
+//                responsiblePersonService.save(seller);
+//            }
+//            productionOrder.setSeller(seller);
+//            productionOrder.setOrderDate(LocalDate.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)));
+//            productionOrder.setOrderDeadLine(LocalDate.now().plusWeeks(6).format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)));
+//            productionOrder.setOrderReadiness(ProductionOrder.Readiness.Nie_gotowe);
+//            form.setProductionOrder(productionOrder);
+//            form.setVisible(true);
+//            addClassName("editing");
+//        }
+//    }
 
-    private void closeEditor() {
-        form.setProductionOrder(null);
-        form.setVisible(false);
-        removeClassName("editing");
-    }
+//    private void closeEditor() {
+//        form.setProductionOrder(null);
+//        form.setVisible(false);
+//        removeClassName("editing");
+//    }
 
-    private void filterList(Boolean value) {
-        grid.setItems(productionOrderService.filterReadyAndEmpty(value));
-    }
+//    private void filterList(Boolean value) {
+//        grid.setItems(newProductionOrderService.filterReadyAndEmpty(value));
+//    }
 
     private String delayCalcReadiness(String date, ProductionOrder.Readiness readiness) {
         return dateNormalizerService.delayCalcFromToday(date,readiness);
     }
 
-    private void navigateTo(ProductionOrder productionOrder) {
-        if (productionOrder == null) {
+    private void navigateTo(NewProductionOrder newProductionOrder) {
+        if (newProductionOrder == null) {
             LOGGER.info("Can't navigate to production order");
         } else {
-            Long productionOrderID = productionOrder.getId();
+            Long productionOrderID = newProductionOrder.getId();
             grid.getUI().ifPresent(ui -> ui.navigate("order-details" + "/" + productionOrderID));
         }
     }
 
-    private void saveProductionOrder(ProductionOrderForm.SaveEvent event) {
-        productionOrderService.save(event.getOrderName());
-        searchInList();
-        closeEditor();
-    }
-
-    private void deleteProductionOrder(ProductionOrderForm.DeleteEvent event) {
-        productionOrderService.delete(event.getOrderName());
-        searchInList();
-        closeEditor();
-    }
+//    private void saveProductionOrder(ProductionOrderForm.SaveEvent event) {
+//        newProductionOrderService.save(event.getOrderName());
+//        searchInList();
+//        closeEditor();
+//    }
+//
+//    private void deleteProductionOrder(ProductionOrderForm.DeleteEvent event) {
+//        newProductionOrderService.delete(event.getOrderName());
+//        searchInList();
+//        closeEditor();
+//    }
 
     @Override
     public void localeChange(LocaleChangeEvent localeChangeEvent) {

@@ -1,5 +1,6 @@
 package by.dziashko.frm.ui.forms.productionOrder;
 
+import by.dziashko.frm.backend.entity.newProductionOrder.ResponsiblePerson;
 import by.dziashko.frm.backend.entity.productionOrder.ProductionOrder;
 import by.dziashko.frm.backend.entity.productionOrder.Seller;
 import com.vaadin.flow.component.Component;
@@ -41,7 +42,7 @@ public class ProductionOrderForm extends FormLayout {
     Binder<ProductionOrder> binder = new Binder<>(ProductionOrder.class);
     private ProductionOrder productionOrder;
 
-    public ProductionOrderForm(List<Seller> responsiblePeople) {
+    public ProductionOrderForm(List<Seller> sellers) {
         addClassName("contact-form");
 
         binder.bindInstanceFields(this);
@@ -58,7 +59,7 @@ public class ProductionOrderForm extends FormLayout {
         deadLineDatePicker.addValueChangeListener(e ->
                 setDeadLineDate(e.getValue().format( DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT) )));
 
-        seller.setItems(responsiblePeople);
+        seller.setItems(sellers);
         seller.setItemLabelGenerator(Seller::getName);
         VerticalLayout lyt = new VerticalLayout(seller, client, orderNumber, orderDatePicker, deadLineDatePicker,
                 createButtonsLayout());
