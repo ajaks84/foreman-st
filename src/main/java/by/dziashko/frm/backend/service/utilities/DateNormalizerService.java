@@ -1,6 +1,6 @@
 package by.dziashko.frm.backend.service.utilities;
 
-import by.dziashko.frm.backend.entity.newProductionOrder.newProductionOrder;
+import by.dziashko.frm.backend.entity.newProductionOrder.NewProductionOrder;
 import by.dziashko.frm.backend.entity.productionOrder.ProductionOrder;
 import org.springframework.stereotype.Service;
 
@@ -114,8 +114,8 @@ public class DateNormalizerService {
         }else return " ";
     }
 
-    public String calcDelayFromToday(String date, newProductionOrder.OrderStatus orderStatus) {
-        if (orderStatus != newProductionOrder.OrderStatus.Wysłane) {
+    public String calcDelayFromToday(String date, NewProductionOrder.OrderStatus orderStatus) {
+        if (orderStatus != NewProductionOrder.OrderStatus.Wysłane) {
             if (date.equals(" ") || date.equals("harmonogram") || date.equals("")) {
                 //System.out.println("Can't calculate: " + date+ ". Not a date");
                 return " ";

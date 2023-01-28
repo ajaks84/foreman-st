@@ -7,7 +7,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 @Entity
-public class newProductionOrder extends AbstractEntity implements Cloneable {
+public class NewProductionOrder extends AbstractEntity implements Cloneable {
 
     //public enum OrderStatus {Gotowe, Nie_gotowe, Wysłane}  // You better find out how to i18N enums....
 
@@ -63,7 +63,7 @@ public class newProductionOrder extends AbstractEntity implements Cloneable {
     //10.
     @Enumerated(EnumType.STRING)
     @NotNull
-    private newProductionOrder.OrderStatus orderStatus;
+    private NewProductionOrder.OrderStatus orderStatus;
 
     //11.
     @NotNull

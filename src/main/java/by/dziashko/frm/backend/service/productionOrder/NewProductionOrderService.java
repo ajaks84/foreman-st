@@ -1,6 +1,6 @@
 package by.dziashko.frm.backend.service.productionOrder;
 
-import by.dziashko.frm.backend.entity.newProductionOrder.newProductionOrder;
+import by.dziashko.frm.backend.entity.newProductionOrder.NewProductionOrder;
 import by.dziashko.frm.backend.repo.newProductionOrder.NewProductionOrderRepo;
 import by.dziashko.frm.backend.repo.newProductionOrder.ResponsiblePersonRepo;
 import org.springframework.stereotype.Service;
@@ -20,11 +20,11 @@ public class NewProductionOrderService {
         this.responsiblePersonRepo = responsiblePersonRepo;
     }
 
-    public List<newProductionOrder> findAll() {
+    public List<NewProductionOrder> findAll() {
         return newProductionOrderRepo.findAll();
     }
 
-    public newProductionOrder find(Long id) {
+    public NewProductionOrder find(Long id) {
         return newProductionOrderRepo.getById(id);
     }
 
@@ -64,7 +64,7 @@ public class NewProductionOrderService {
         return newProductionOrderRepo.count();
     }
 
-    public void delete(newProductionOrder newProductionOrder) {
+    public void delete(NewProductionOrder newProductionOrder) {
         newProductionOrderRepo.delete(newProductionOrder);
     }
 
@@ -72,7 +72,7 @@ public class NewProductionOrderService {
         newProductionOrderRepo.deleteAll();
     }
 
-    public void save(newProductionOrder newProductionOrder) {
+    public void save(NewProductionOrder newProductionOrder) {
         if (newProductionOrder == null) {
             LOGGER.log(Level.SEVERE,
                     "NewProductionOrder is null. Are you sure you've connected your form to the application?");

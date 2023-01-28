@@ -1,5 +1,6 @@
 package by.dziashko.frm.ui.forms.newProductionOrder;
 
+import by.dziashko.frm.backend.entity.newProductionOrder.NewProductionOrder;
 import by.dziashko.frm.backend.entity.newProductionOrder.ResponsiblePerson;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
@@ -25,8 +26,8 @@ public class NewProductionOrderForm extends FormLayout {
     Button save = new Button(getTranslation("Save"));
     Button close = new Button(getTranslation("Cancel"));
 
-    Binder<by.dziashko.frm.backend.entity.newProductionOrder.newProductionOrder> binder = new Binder<>(by.dziashko.frm.backend.entity.newProductionOrder.newProductionOrder.class);
-    private by.dziashko.frm.backend.entity.newProductionOrder.newProductionOrder newProductionOrder;
+    Binder<NewProductionOrder> binder = new Binder<>(NewProductionOrder.class);
+    private NewProductionOrder newProductionOrder;
 
     public NewProductionOrderForm(List<ResponsiblePerson> sellers) {
         addClassName("contact-form");

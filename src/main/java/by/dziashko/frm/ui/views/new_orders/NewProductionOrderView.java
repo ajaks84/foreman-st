@@ -1,6 +1,6 @@
 package by.dziashko.frm.ui.views.new_orders;
 
-import by.dziashko.frm.backend.entity.newProductionOrder.newProductionOrder;
+import by.dziashko.frm.backend.entity.newProductionOrder.NewProductionOrder;
 import by.dziashko.frm.backend.entity.newProductionOrder.ResponsiblePerson;
 import by.dziashko.frm.backend.service.productionOrder.NewProductionOrderService;
 import by.dziashko.frm.backend.service.productionOrder.ResponsiblePersonService;
@@ -38,7 +38,7 @@ public class NewProductionOrderView extends VerticalLayout implements Serializab
 
     NewProductionOrderService newProductionOrderService;
     ResponsiblePersonService responsiblePersonService;
-    Grid<newProductionOrder> grid = new Grid<>(newProductionOrder.class);
+    Grid<NewProductionOrder> grid = new Grid<>(NewProductionOrder.class);
     TextField filterText = new TextField();
     NewProductionOrderForm form;
     Checkbox checkbox = new Checkbox();
@@ -80,20 +80,20 @@ public class NewProductionOrderView extends VerticalLayout implements Serializab
         grid.addClassName("contact-grid");
         grid.setSizeFull();
         grid.setColumns();
-        grid.addColumn(newProductionOrder::getClient).setHeader(getTranslation("Client"));
-        grid.addColumn(newProductionOrder::getProjectNumber).setHeader(getTranslation("Project_Number"));
+        grid.addColumn(NewProductionOrder::getClient).setHeader(getTranslation("Client"));
+        grid.addColumn(NewProductionOrder::getProjectNumber).setHeader(getTranslation("Project_Number"));
         grid.addColumn(orderName -> {
             ResponsiblePerson responsiblePerson = orderName.getResponsiblePerson();
             return responsiblePerson == null ? "-" : responsiblePerson.getName();
         }).setHeader(getTranslation("ResponsiblePerson")).setSortable(true);
-        grid.addColumn(newProductionOrder::getOrderDate).setHeader(getTranslation("Order_Date"));
-        grid.addColumn(newProductionOrder::getOrderDeadLine).setHeader(getTranslation("Order_Deadline"));
+        grid.addColumn(NewProductionOrder::getOrderDate).setHeader(getTranslation("Order_Date"));
+        grid.addColumn(NewProductionOrder::getOrderDeadLine).setHeader(getTranslation("Order_Deadline"));
         grid.addColumn(newProductionOrder -> delayCalcReadiness(newProductionOrder.getOrderDeadLine(), newProductionOrder.getOrderStatus()))
                 .setHeader(getTranslation("Order_Delay")).setKey("ordegridrCol");
-        grid.addColumn(newProductionOrder::getPlanedDispatchDate).setHeader(getTranslation("Planed_Dispatch_Date"));
-        grid.addColumn(newProductionOrder::getPlanedOrderCompletionDate).setHeader(getTranslation("Planed_Order_Compl_Date"));
-        grid.addColumn(newProductionOrder::getTermsOfDelivery).setHeader(getTranslation("Terms_Of_Delivery"));
-        grid.addColumn(newProductionOrder::getOrderStatus).setHeader(getTranslation("Order_Status")).setSortable(true);
+        grid.addColumn(NewProductionOrder::getPlanedDispatchDate).setHeader(getTranslation("Planed_Dispatch_Date"));
+        grid.addColumn(NewProductionOrder::getPlanedOrderCompletionDate).setHeader(getTranslation("Planed_Order_Compl_Date"));
+        grid.addColumn(NewProductionOrder::getTermsOfDelivery).setHeader(getTranslation("Terms_Of_Delivery"));
+        grid.addColumn(NewProductionOrder::getOrderStatus).setHeader(getTranslation("Order_Status")).setSortable(true);
 
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
         grid.addItemClickListener(event -> navigateTo(event.getItem()));
@@ -165,11 +165,11 @@ public class NewProductionOrderView extends VerticalLayout implements Serializab
 //        grid.setItems(newProductionOrderService.filterReadyAndEmpty(value));
 //    }
 
-    private String delayCalcReadiness(String date, newProductionOrder.OrderStatus orderStatus) {
+    private String delayCalcReadiness(String date, NewProductionOrder.OrderStatus orderStatus) {
         return dateNormalizerService.calcDelayFromToday(date,orderStatus);
     }
 
-    private void navigateTo(newProductionOrder newProductionOrder) {
+    private void navigateTo(NewProductionOrder newProductionOrder) {
         if (newProductionOrder == null) {
             LOGGER.info("Can't navigate to production order");
         } else {

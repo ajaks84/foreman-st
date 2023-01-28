@@ -1,6 +1,6 @@
 package by.dziashko.frm.backend.service.utilities;
 
-import by.dziashko.frm.backend.entity.newProductionOrder.newProductionOrder;
+import by.dziashko.frm.backend.entity.newProductionOrder.NewProductionOrder;
 import by.dziashko.frm.backend.entity.newProductionOrder.ResponsiblePerson;
 import by.dziashko.frm.backend.service.productionOrder.NewProductionOrderService;
 import by.dziashko.frm.backend.service.productionOrder.ResponsiblePersonService;
@@ -51,7 +51,7 @@ public class NewGoogleSheetsReaderService {
                 }
                 if (i < 2) {
                     if (!row.isEmpty()) {
-                        newProductionOrder newProductionOrder = new newProductionOrder();
+                        NewProductionOrder newProductionOrder = new NewProductionOrder();
                         ResponsiblePerson responsiblePerson = new ResponsiblePerson();
 
                         //ROW 0
@@ -154,13 +154,13 @@ public class NewGoogleSheetsReaderService {
                         newProductionOrder.setTermsOfDelivery(termsOfDelivery);
                         // orderStatus
                         if (orderStatus.contentEquals("Wysłane")) {
-                            newProductionOrder.setOrderStatus(by.dziashko.frm.backend.entity.newProductionOrder.newProductionOrder.OrderStatus.Wysłane);
+                            newProductionOrder.setOrderStatus(NewProductionOrder.OrderStatus.Wysłane);
                         }
                         if (orderStatus.contentEquals("Nie gotowe")) {
-                            newProductionOrder.setOrderStatus(by.dziashko.frm.backend.entity.newProductionOrder.newProductionOrder.OrderStatus.Nie_gotowe);
+                            newProductionOrder.setOrderStatus(NewProductionOrder.OrderStatus.Nie_gotowe);
                         }
                         if (orderStatus.contentEquals("Gotowe")) {
-                            newProductionOrder.setOrderStatus(by.dziashko.frm.backend.entity.newProductionOrder.newProductionOrder.OrderStatus.Gotowe);
+                            newProductionOrder.setOrderStatus(NewProductionOrder.OrderStatus.Gotowe);
                         }
                         // info
                         newProductionOrder.setInfo(info);
