@@ -21,16 +21,18 @@ public class GoogleSheetsReaderService {
     private final ProductionOrderService productionOrderService;
     private final SellerService sellerService;
     private final DateNormalizerService dateNormalizerService;
+    private final OrderStatusNameHandlerService orderStatusNameHandlerService;
     final String sheetId_st = "1uCMkk9bvWX84sogpDoG3REINZEo5jx3eVQovgQZF9eo";  //Sant-Tech
     String emptyMessage = "";
     String message = "brak danych";
     final String range = "PLAN PRODUKCJI  !A2:AB";
 
     public GoogleSheetsReaderService(ProductionOrderService productionOrderService, SellerService sellerService,
-                                     DateNormalizerService dateNormalizerService) {
+                                     DateNormalizerService dateNormalizerService, OrderStatusNameHandlerService orderStatusNameHandlerService) {
         this.productionOrderService = productionOrderService;
         this.sellerService = sellerService;
         this.dateNormalizerService = dateNormalizerService;
+        this.orderStatusNameHandlerService = orderStatusNameHandlerService;
     }
 
     public void getSheetsData() throws GeneralSecurityException, IOException {
@@ -126,15 +128,7 @@ public class GoogleSheetsReaderService {
                         //Order deadline
                         productionOrder.setOrderDeadLine(orderDeadLine);
                         //Order Readiness
-                        if (orderReadiness.contentEquals("Wysłane")) {
-                            productionOrder.setOrderReadiness(ProductionOrder.Readiness.Wysłane);
-                        }
-                        if (orderReadiness.contentEquals("Nie gotowe")) {
-                            productionOrder.setOrderReadiness(ProductionOrder.Readiness.Nie_gotowe);
-                        }
-                        if (orderReadiness.contentEquals("Gotowe")) {
-                            productionOrder.setOrderReadiness(ProductionOrder.Readiness.Gotowe);
-                        }
+                        productionOrder.setOrderReadiness(orderStatusNameHandlerService.setOrderStatus(orderReadiness));
                         //Cabin Type
                         productionOrder.setCabinType(cabinType);
                         //Cabin Readiness

@@ -1,17 +1,13 @@
 package by.dziashko.frm.ui.views.new_orders;
 
-import by.dziashko.frm.backend.entity.newProductionOrder.NewProductionOrder;
+import by.dziashko.frm.backend.entity.newProductionOrder.newProductionOrder;
 import by.dziashko.frm.backend.entity.newProductionOrder.ResponsiblePerson;
-import by.dziashko.frm.backend.entity.productionOrder.ProductionOrder;
-import by.dziashko.frm.backend.entity.productionOrder.Seller;
 import by.dziashko.frm.backend.service.productionOrder.NewProductionOrderService;
 import by.dziashko.frm.backend.service.productionOrder.ResponsiblePersonService;
 import by.dziashko.frm.backend.service.utilities.DateNormalizerService;
 import by.dziashko.frm.ui.forms.newProductionOrder.NewProductionOrderForm;
-import by.dziashko.frm.ui.forms.productionOrder.ProductionOrderForm;
 import by.dziashko.frm.ui.views.main.MainView;
 import com.vaadin.flow.component.UI;
-import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dependency.HtmlImport;
@@ -20,20 +16,13 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.i18n.LocaleChangeEvent;
 import com.vaadin.flow.i18n.LocaleChangeObserver;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
 import org.springframework.context.annotation.Scope;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.User;
 
 import java.io.Serializable;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 
 import static org.hibernate.bytecode.BytecodeLogger.LOGGER;
 
@@ -49,7 +38,7 @@ public class NewProductionOrderView extends VerticalLayout implements Serializab
 
     NewProductionOrderService newProductionOrderService;
     ResponsiblePersonService responsiblePersonService;
-    Grid<NewProductionOrder> grid = new Grid<>(NewProductionOrder.class);
+    Grid<newProductionOrder> grid = new Grid<>(newProductionOrder.class);
     TextField filterText = new TextField();
     NewProductionOrderForm form;
     Checkbox checkbox = new Checkbox();
@@ -91,18 +80,21 @@ public class NewProductionOrderView extends VerticalLayout implements Serializab
         grid.addClassName("contact-grid");
         grid.setSizeFull();
         grid.setColumns();
+        grid.addColumn(newProductionOrder::getClient).setHeader(getTranslation("Client"));
+        grid.addColumn(newProductionOrder::getProjectNumber).setHeader(getTranslation("Project_Number"));
         grid.addColumn(orderName -> {
             ResponsiblePerson responsiblePerson = orderName.getResponsiblePerson();
             return responsiblePerson == null ? "-" : responsiblePerson.getName();
         }).setHeader(getTranslation("ResponsiblePerson")).setSortable(true);
-        grid.addColumn(NewProductionOrder::getClient).setHeader(getTranslation("Client"));
-        grid.addColumn(NewProductionOrder::getProjectNumber).setHeader(getTranslation("Project_Number"));
-//        grid.addColumn(ProductionOrder::getOrderNumber).setHeader(getTranslation("Order_Number"));
-        grid.addColumn(NewProductionOrder::getOrderDate).setHeader(getTranslation("Order_Date"));
-        grid.addColumn(NewProductionOrder::getOrderDeadLine).setHeader(getTranslation("Order_Deadline"));
-//        grid.addColumn(productionOrder -> delayCalcReadiness(productionOrder.getOrderDeadLine(), productionOrder.getOrderReadiness()))
-//                .setHeader(getTranslation("Order_Delay")).setKey("ordegridrCol");
-//        grid.addColumn(ProductionOrder::getOrderReadiness).setHeader(getTranslation("Order_Readiness")).setSortable(true);
+        grid.addColumn(newProductionOrder::getOrderDate).setHeader(getTranslation("Order_Date"));
+        grid.addColumn(newProductionOrder::getOrderDeadLine).setHeader(getTranslation("Order_Deadline"));
+        grid.addColumn(newProductionOrder -> delayCalcReadiness(newProductionOrder.getOrderDeadLine(), newProductionOrder.getOrderStatus()))
+                .setHeader(getTranslation("Order_Delay")).setKey("ordegridrCol");
+        grid.addColumn(newProductionOrder::getPlanedDispatchDate).setHeader(getTranslation("Planed_Dispatch_Date"));
+        grid.addColumn(newProductionOrder::getPlanedOrderCompletionDate).setHeader(getTranslation("Planed_Order_Compl_Date"));
+        grid.addColumn(newProductionOrder::getTermsOfDelivery).setHeader(getTranslation("Terms_Of_Delivery"));
+        grid.addColumn(newProductionOrder::getOrderStatus).setHeader(getTranslation("Order_Status")).setSortable(true);
+
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
         grid.addItemClickListener(event -> navigateTo(event.getItem()));
 //        grid.getColumnByKey("ordegridrCol").setClassNameGenerator(productionOrder -> {
@@ -173,11 +165,11 @@ public class NewProductionOrderView extends VerticalLayout implements Serializab
 //        grid.setItems(newProductionOrderService.filterReadyAndEmpty(value));
 //    }
 
-    private String delayCalcReadiness(String date, ProductionOrder.Readiness readiness) {
-        return dateNormalizerService.delayCalcFromToday(date,readiness);
+    private String delayCalcReadiness(String date, newProductionOrder.OrderStatus orderStatus) {
+        return dateNormalizerService.calcDelayFromToday(date,orderStatus);
     }
 
-    private void navigateTo(NewProductionOrder newProductionOrder) {
+    private void navigateTo(newProductionOrder newProductionOrder) {
         if (newProductionOrder == null) {
             LOGGER.info("Can't navigate to production order");
         } else {

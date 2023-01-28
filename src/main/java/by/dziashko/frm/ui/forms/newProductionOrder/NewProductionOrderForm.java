@@ -1,19 +1,13 @@
 package by.dziashko.frm.ui.forms.newProductionOrder;
 
-import by.dziashko.frm.backend.entity.newProductionOrder.NewProductionOrder;
 import by.dziashko.frm.backend.entity.newProductionOrder.ResponsiblePerson;
-import by.dziashko.frm.backend.entity.productionOrder.ProductionOrder;
-import by.dziashko.frm.backend.entity.productionOrder.Seller;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.formlayout.FormLayout;
-import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 
-import java.time.format.DateTimeFormatter;
-import java.time.format.FormatStyle;
 import java.util.List;
 
 public class NewProductionOrderForm extends FormLayout {
@@ -31,8 +25,8 @@ public class NewProductionOrderForm extends FormLayout {
     Button save = new Button(getTranslation("Save"));
     Button close = new Button(getTranslation("Cancel"));
 
-    Binder<NewProductionOrder> binder = new Binder<>(NewProductionOrder.class);
-    private NewProductionOrder newProductionOrder;
+    Binder<by.dziashko.frm.backend.entity.newProductionOrder.newProductionOrder> binder = new Binder<>(by.dziashko.frm.backend.entity.newProductionOrder.newProductionOrder.class);
+    private by.dziashko.frm.backend.entity.newProductionOrder.newProductionOrder newProductionOrder;
 
     public NewProductionOrderForm(List<ResponsiblePerson> sellers) {
         addClassName("contact-form");

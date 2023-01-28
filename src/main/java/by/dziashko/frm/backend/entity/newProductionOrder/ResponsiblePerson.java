@@ -17,7 +17,7 @@ public class ResponsiblePerson extends AbstractEntity implements Cloneable{
     private Integer phoneNumber;
 
     @OneToMany(mappedBy = "responsiblePerson", fetch = FetchType.EAGER)
-    private final List<NewProductionOrder> newProductionOrders = new LinkedList<>();
+    private final List<newProductionOrder> newProductionOrders = new LinkedList<>();
 
     public ResponsiblePerson() { }
 
@@ -33,7 +33,7 @@ public class ResponsiblePerson extends AbstractEntity implements Cloneable{
         this.name = name;
     }
 
-    public List<NewProductionOrder> getOrderNames() {
+    public List<newProductionOrder> getOrderNames() {
         return newProductionOrders;
     }
 

@@ -1,16 +1,11 @@
 package by.dziashko.frm.backend.repo.newProductionOrder;
 
-import by.dziashko.frm.backend.entity.newProductionOrder.NewProductionOrder;
+import by.dziashko.frm.backend.entity.newProductionOrder.newProductionOrder;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
-public interface NewProductionOrderRepo extends JpaRepository<NewProductionOrder, Long> {
+public interface NewProductionOrderRepo extends JpaRepository<newProductionOrder, Long> {
 
 //    @Query("select c from NewProductionOrder c where lower(c.responsiblePerson) like lower(concat('%', :searchTerm, '%'))")
 //    List<NewProductionOrder> search(@Param("searchTerm") String searchTerm);
@@ -22,7 +17,7 @@ public interface NewProductionOrderRepo extends JpaRepository<NewProductionOrder
 
 //    NewProductionOrder getByOrderNumber(String orderNumber);
 
-    NewProductionOrder getById(Long id);
+    newProductionOrder getById(Long id);
 
 //    @Modifying
 //    @Query( value = "truncate table myTable", nativeQuery = true)  //Fast deleting aternatywa  void deleteAll();

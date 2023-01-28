@@ -1,5 +1,6 @@
 package by.dziashko.frm.backend.service.utilities;
 
+import by.dziashko.frm.backend.entity.newProductionOrder.newProductionOrder;
 import by.dziashko.frm.backend.entity.productionOrder.ProductionOrder;
 import org.springframework.stereotype.Service;
 
@@ -87,6 +88,34 @@ public class DateNormalizerService {
 
     public String delayCalcFromToday(String date, ProductionOrder.Readiness readiness) {
         if (readiness != ProductionOrder.Readiness.Wysłane) {
+            if (date.equals(" ") || date.equals("harmonogram") || date.equals("")) {
+                //System.out.println("Can't calculate: " + date+ ". Not a date");
+                return " ";
+            } else {
+
+                SimpleDateFormat sdf = new SimpleDateFormat(datePattern);
+                Date deadLineDateParsed = null;
+                Date todayParsed = null;
+                try {
+                    todayParsed = sdf.parse(today);
+                    deadLineDateParsed = sdf.parse(date);
+                } catch (ParseException e) {
+                    System.out.println("Can't parse: " + date);
+                }
+                if (deadLineDateParsed == null) {
+                    return " ";
+                } else {
+                    long diffInMillis = Math.subtractExact(deadLineDateParsed.getTime(), todayParsed.getTime());
+                    long diff = TimeUnit.DAYS.convert(diffInMillis, TimeUnit.MILLISECONDS);
+
+                    return Long.toString(diff);
+                }
+            }
+        }else return " ";
+    }
+
+    public String calcDelayFromToday(String date, newProductionOrder.OrderStatus orderStatus) {
+        if (orderStatus != newProductionOrder.OrderStatus.Wysłane) {
             if (date.equals(" ") || date.equals("harmonogram") || date.equals("")) {
                 //System.out.println("Can't calculate: " + date+ ". Not a date");
                 return " ";
