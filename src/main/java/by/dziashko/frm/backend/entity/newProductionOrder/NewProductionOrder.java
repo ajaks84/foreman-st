@@ -9,11 +9,7 @@ import javax.validation.constraints.NotNull;
 @Entity
 public class NewProductionOrder extends AbstractEntity implements Cloneable {
 
-    //public enum OrderStatus {Gotowe, Nie_gotowe, Wysłane}  // You better find out how to i18N enums....
-
-    public enum OrderStatus { Status_zlecenia, Nowe, Gotowe, Nie_gotowe, Wysłane }
-
-    //public enum Readiness {Ready, NotReady, Sent}
+    public enum OrderStatus { New, AcceptedForProduction, Designing, OrderingParts, ReadyForAssemble, Assembling, ReadyForDispatch, Installation, Ended, OnHold }
 
     //1.
     @NotNull

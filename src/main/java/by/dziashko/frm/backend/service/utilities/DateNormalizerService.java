@@ -115,7 +115,7 @@ public class DateNormalizerService {
     }
 
     public String calcDelayFromToday(String date, NewProductionOrder.OrderStatus orderStatus) {
-        if (orderStatus != NewProductionOrder.OrderStatus.Wysłane) {
+        if (orderStatus != NewProductionOrder.OrderStatus.Ended) {
             if (date.equals(" ") || date.equals("harmonogram") || date.equals("")) {
                 //System.out.println("Can't calculate: " + date+ ". Not a date");
                 return " ";

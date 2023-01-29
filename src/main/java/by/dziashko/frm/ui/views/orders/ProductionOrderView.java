@@ -5,6 +5,7 @@ import by.dziashko.frm.backend.entity.productionOrder.Seller;
 import by.dziashko.frm.backend.service.utilities.DateNormalizerService;
 import by.dziashko.frm.backend.service.productionOrder.ProductionOrderService;
 import by.dziashko.frm.backend.service.productionOrder.SellerService;
+import by.dziashko.frm.backend.service.utilities.OrderStatusNameHandlerService;
 import by.dziashko.frm.ui.forms.productionOrder.ProductionOrderForm;
 import by.dziashko.frm.ui.views.main.MainView;
 import com.vaadin.flow.component.UI;
@@ -43,6 +44,7 @@ public class ProductionOrderView extends VerticalLayout implements Serializable,
     private static final long serialVersionUID = 6529685098267757690L;
 
     ProductionOrderService productionOrderService;
+    OrderStatusNameHandlerService orderStatusNameHandlerService;
     SellerService sellerService;
     Grid<ProductionOrder> grid = new Grid<>(ProductionOrder.class);
     TextField filterText = new TextField();
@@ -52,10 +54,12 @@ public class ProductionOrderView extends VerticalLayout implements Serializable,
 
     private final DateNormalizerService dateNormalizerService;
 
-    public ProductionOrderView(ProductionOrderService productionOrderService, SellerService sellerService, DateNormalizerService dateNormalizerService) {
+    public ProductionOrderView(ProductionOrderService productionOrderService, SellerService sellerService,
+                               DateNormalizerService dateNormalizerService, OrderStatusNameHandlerService orderStatusNameHandlerService) {
         this.sellerService = sellerService;
         this.productionOrderService = productionOrderService;
         this.dateNormalizerService = dateNormalizerService;
+        this.orderStatusNameHandlerService=orderStatusNameHandlerService;
 
         UI current = UI.getCurrent();
         current.getPage().setTitle(getTranslation("Orders_old"));
@@ -94,9 +98,8 @@ public class ProductionOrderView extends VerticalLayout implements Serializable,
         grid.addColumn(ProductionOrder::getOrderNumber).setHeader(getTranslation("Order_Number"));
         grid.addColumn(ProductionOrder::getOrderDate).setHeader(getTranslation("Order_Date"));
         grid.addColumn(ProductionOrder::getOrderDeadLine).setHeader(getTranslation("Order_Deadline"));
-        grid.addColumn(productionOrder -> delayCalcReadiness(productionOrder.getOrderDeadLine(), productionOrder.getOrderReadiness()))
-                .setHeader(getTranslation("Order_Delay")).setKey("ordegridrCol");
-        grid.addColumn(ProductionOrder::getOrderReadiness).setHeader(getTranslation("Order_Readiness")).setSortable(true);
+        grid.addColumn(productionOrder -> delayCalcReadiness(productionOrder.getOrderDeadLine(),productionOrder.getOrderReadiness())).setHeader(getTranslation("Order_Delay")).setKey("ordegridrCol");
+        grid.addColumn(productionOrder -> normalizeOrderReadinessName(productionOrder.getOrderReadiness())).setHeader(getTranslation("Order_Readiness")).setSortable(true);
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
         grid.addItemClickListener(event -> navigateTo(event.getItem()));
         grid.getColumnByKey("ordegridrCol").setClassNameGenerator(productionOrder -> {
@@ -201,6 +204,10 @@ public class ProductionOrderView extends VerticalLayout implements Serializable,
 
     private String delayCalcReadiness(String date, ProductionOrder.Readiness readiness) {
        return dateNormalizerService.delayCalcFromToday(date,readiness);
+    }
+
+    private String normalizeOrderReadinessName(ProductionOrder.Readiness readiness){
+        return orderStatusNameHandlerService.normalizeOrderReadinessName(readiness);
     }
 
     private int setBackGroundColor(String date) {

@@ -2,9 +2,11 @@ package by.dziashko.frm.ui.views.new_orders;
 
 import by.dziashko.frm.backend.entity.newProductionOrder.NewProductionOrder;
 import by.dziashko.frm.backend.entity.newProductionOrder.ResponsiblePerson;
+import by.dziashko.frm.backend.entity.productionOrder.ProductionOrder;
 import by.dziashko.frm.backend.service.productionOrder.NewProductionOrderService;
 import by.dziashko.frm.backend.service.productionOrder.ResponsiblePersonService;
 import by.dziashko.frm.backend.service.utilities.DateNormalizerService;
+import by.dziashko.frm.backend.service.utilities.OrderStatusNameHandlerService;
 import by.dziashko.frm.ui.forms.newProductionOrder.NewProductionOrderForm;
 import by.dziashko.frm.ui.views.main.MainView;
 import com.vaadin.flow.component.UI;
@@ -36,6 +38,7 @@ public class NewProductionOrderView extends VerticalLayout implements Serializab
 
     private static final long serialVersionUID = 6529685098267757699L;
 
+    OrderStatusNameHandlerService orderStatusNameHandlerService;
     NewProductionOrderService newProductionOrderService;
     ResponsiblePersonService responsiblePersonService;
     Grid<NewProductionOrder> grid = new Grid<>(NewProductionOrder.class);
@@ -48,10 +51,12 @@ public class NewProductionOrderView extends VerticalLayout implements Serializab
 
     public NewProductionOrderView(NewProductionOrderService newProductionOrderService,
                                   ResponsiblePersonService responsiblePersonService,
-                                  DateNormalizerService dateNormalizerService) {
+                                  DateNormalizerService dateNormalizerService,
+                                  OrderStatusNameHandlerService orderStatusNameHandlerService) {
         this.responsiblePersonService = responsiblePersonService;
         this.newProductionOrderService = newProductionOrderService;
         this.dateNormalizerService = dateNormalizerService;
+        this.orderStatusNameHandlerService=orderStatusNameHandlerService;
 
         UI current = UI.getCurrent();
         current.getPage().setTitle(getTranslation("Orders_new"));
@@ -93,8 +98,7 @@ public class NewProductionOrderView extends VerticalLayout implements Serializab
         grid.addColumn(NewProductionOrder::getPlanedDispatchDate).setHeader(getTranslation("Planed_Dispatch_Date"));
         grid.addColumn(NewProductionOrder::getPlanedOrderCompletionDate).setHeader(getTranslation("Planed_Order_Compl_Date"));
         grid.addColumn(NewProductionOrder::getTermsOfDelivery).setHeader(getTranslation("Terms_Of_Delivery"));
-        grid.addColumn(NewProductionOrder::getOrderStatus).setHeader(getTranslation("Order_Status")).setSortable(true);
-
+        grid.addColumn(newProductionOrder -> normalizeOrderStatusName(newProductionOrder.getOrderStatus())).setHeader(getTranslation("Order_Readiness")).setSortable(true);
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
         grid.addItemClickListener(event -> navigateTo(event.getItem()));
 //        grid.getColumnByKey("ordegridrCol").setClassNameGenerator(productionOrder -> {
@@ -176,6 +180,10 @@ public class NewProductionOrderView extends VerticalLayout implements Serializab
             Long productionOrderID = newProductionOrder.getId();
             grid.getUI().ifPresent(ui -> ui.navigate("order-details" + "/" + productionOrderID));
         }
+    }
+
+    private String normalizeOrderStatusName (NewProductionOrder.OrderStatus orderStatus){
+        return orderStatusNameHandlerService.normalizeOrderStatusName(orderStatus);
     }
 
 //    private void saveProductionOrder(ProductionOrderForm.SaveEvent event) {

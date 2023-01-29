@@ -107,9 +107,9 @@ public class GoogleSheetsReaderService {
                         if (row.size() > 25) {
                             additionalOptions = (String) row.get(25);
                         }
-                        String AdditionalOptionsReadiness = emptyMessage;
+                        String additionalOptionsReadiness = emptyMessage;
                         if (row.size() > 26) {
-                            AdditionalOptionsReadiness = (String) row.get(26);
+                            additionalOptionsReadiness = (String) row.get(26);
                         }
                         // Details settings
                         if (sellerService.find(sellerNameTrailedCpt) == null) {
@@ -117,6 +117,9 @@ public class GoogleSheetsReaderService {
                             productionOrder.setSeller(slr);
                         } else
                             productionOrder.setSeller(sellerService.find(sellerNameTrailedCpt));
+
+                        // Completing a productionOrder
+
                         //Client
                         productionOrder.setClient(client);
                         //Project number
@@ -128,55 +131,24 @@ public class GoogleSheetsReaderService {
                         //Order deadline
                         productionOrder.setOrderDeadLine(orderDeadLine);
                         //Order Readiness
-                        productionOrder.setOrderReadiness(orderStatusNameHandlerService.setOrderStatus(orderReadiness));
+                        productionOrder.setOrderReadiness(orderStatusNameHandlerService.setOrderReadiness(orderReadiness));
                         //Cabin Type
                         productionOrder.setCabinType(cabinType);
                         //Cabin Readiness
-                        if (cabinReadiness.contentEquals("Wysłane")) {
-                            productionOrder.setCabinReadiness(ProductionOrder.Readiness.Wysłane);
-                        }
-                        if (cabinReadiness.contentEquals("Nie gotowe")) {
-                            productionOrder.setCabinReadiness(ProductionOrder.Readiness.Nie_gotowe);
-                        }
-                        if (cabinReadiness.contentEquals("Gotowe")) {
-                            productionOrder.setCabinReadiness(ProductionOrder.Readiness.Gotowe);
-                        }
+                        productionOrder.setCabinReadiness(orderStatusNameHandlerService.setOrderReadiness(cabinReadiness));
                         //Aspirator Type
                         productionOrder.setAspiratorType(aspiratorType);
                         //Aspirator Readiness
-                        if (aspiratorReadiness.contentEquals("Wysłane")) {
-                            productionOrder.setAspiratorReadiness(ProductionOrder.Readiness.Wysłane);
-                        }
-                        if (aspiratorReadiness.contentEquals("Nie gotowe")) {
-                            productionOrder.setAspiratorReadiness(ProductionOrder.Readiness.Nie_gotowe);
-                        }
-                        if (aspiratorReadiness.contentEquals("Gotowe")) {
-                            productionOrder.setAspiratorReadiness(ProductionOrder.Readiness.Gotowe);
-                        }
+                        productionOrder.setAspiratorReadiness(orderStatusNameHandlerService.setOrderReadiness(aspiratorReadiness));
                         //Separator Type
                         productionOrder.setSeparatorType(separatorType);
                         //Separator Readiness
-                        if (separatorReadiness.contentEquals("Wysłane")) {
-                            productionOrder.setSeparatorReadiness(ProductionOrder.Readiness.Wysłane);
-                        }
-                        if (separatorReadiness.contentEquals("Nie gotowe")) {
-                            productionOrder.setSeparatorReadiness(ProductionOrder.Readiness.Nie_gotowe);
-                        }
-                        if (separatorReadiness.contentEquals("Gotowe")) {
-                            productionOrder.setSeparatorReadiness(ProductionOrder.Readiness.Gotowe);
-                        }
+                        productionOrder.setSeparatorReadiness(orderStatusNameHandlerService.setOrderReadiness(separatorReadiness));
                         //Additional Options
                         productionOrder.setAdditionalOptions(additionalOptions);
                         //Additional Options Readiness
-                        if (AdditionalOptionsReadiness.contentEquals("Wysłane")) {
-                            productionOrder.setAdditionalOptionsReadiness(ProductionOrder.Readiness.Wysłane);
-                        }
-                        if (AdditionalOptionsReadiness.contentEquals("Nie gotowe")) {
-                            productionOrder.setAdditionalOptionsReadiness(ProductionOrder.Readiness.Nie_gotowe);
-                        }
-                        if (AdditionalOptionsReadiness.contentEquals("Gotowe")) {
-                            productionOrder.setAdditionalOptionsReadiness(ProductionOrder.Readiness.Gotowe);
-                        }
+                        productionOrder.setAdditionalOptionsReadiness(orderStatusNameHandlerService.setOrderReadiness(additionalOptionsReadiness));
+
                         //Saving an order
                         try {
                             productionOrderService.save(productionOrder);

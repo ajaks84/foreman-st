@@ -23,6 +23,7 @@ public class NewGoogleSheetsReaderService {
     private final DateNormalizerService dateNormalizerService;
     //final String sheetId_st = "1uCMkk9bvWX84sogpDoG3REINZEo5jx3eVQovgQZF9eo";  //Sant-Tech
     final String sheetId_st = "1jCYuZKFL0vGaPsTUbJ5dedgDLdhHwna722KsMBhyujs"; //Sant-Tech new
+    private final OrderStatusNameHandlerService orderStatusNameHandlerService;
 
     String emptyMessage = "";
     String message = "brak danych";
@@ -31,10 +32,12 @@ public class NewGoogleSheetsReaderService {
 
     public NewGoogleSheetsReaderService(NewProductionOrderService newProductionOrderService,
                                         ResponsiblePersonService responsiblePersonService,
-                                        DateNormalizerService dateNormalizerService) {
+                                        DateNormalizerService dateNormalizerService,
+                                        OrderStatusNameHandlerService orderStatusNameHandlerService) {
         this.newProductionOrderService = newProductionOrderService;
         this.responsiblePersonService = responsiblePersonService;
         this.dateNormalizerService = dateNormalizerService;
+        this.orderStatusNameHandlerService = orderStatusNameHandlerService;
     }
 
     public void getSheetsData() throws GeneralSecurityException, IOException {
@@ -153,15 +156,7 @@ public class NewGoogleSheetsReaderService {
                         // termsOfDelivery
                         newProductionOrder.setTermsOfDelivery(termsOfDelivery);
                         // orderStatus
-                        if (orderStatus.contentEquals("Wysłane")) {
-                            newProductionOrder.setOrderStatus(NewProductionOrder.OrderStatus.Wysłane);
-                        }
-                        if (orderStatus.contentEquals("Nie gotowe")) {
-                            newProductionOrder.setOrderStatus(NewProductionOrder.OrderStatus.Nie_gotowe);
-                        }
-                        if (orderStatus.contentEquals("Gotowe")) {
-                            newProductionOrder.setOrderStatus(NewProductionOrder.OrderStatus.Gotowe);
-                        }
+                        newProductionOrder.setOrderStatus(orderStatusNameHandlerService.setOrderStatus(orderStatus));
                         // info
                         newProductionOrder.setInfo(info);
                         // orderDetailsRef
