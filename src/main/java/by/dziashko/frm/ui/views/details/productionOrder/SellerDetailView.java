@@ -1,4 +1,4 @@
-package by.dziashko.frm.ui.views.details;
+package by.dziashko.frm.ui.views.details.productionOrder;
 
 import by.dziashko.frm.backend.entity.productionOrder.Seller;
 import by.dziashko.frm.backend.service.productionOrder.SellerService;

@@ -45,11 +45,7 @@ import java.util.Optional;
  * The main view is a top-level placeholder for other views.
  */
 @JsModule("./styles/shared-styles.js")
-@PWA(name = "foreman", shortName = "foreman",
-        enableInstallPrompt = false,
-        offlineResources = {
-                "./styles/offline.css",
-                "./images/offline.png"})
+@PWA(name="foreman", shortName="foreman",enableInstallPrompt=false,offlineResources={"./styles/offline.css","./images/offline.png"})
 @Theme(value = Lumo.class, variant = Lumo.DARK)
 @CssImport("./styles/views/main/main-view.css")
 public class MainView extends AppLayout implements LocaleChangeObserver {

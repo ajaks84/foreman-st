@@ -32,13 +32,13 @@ public class NewProductionOrderService {
 //        return newProductionOrderRepo.getByOrderNumber(s);
 //    }
 
-//    public List<NewProductionOrder> findAll(String stringFilter) {
-//        if (stringFilter == null || stringFilter.isEmpty()) {
-//            return newProductionOrderRepo.findAll();
-//        } else {
-//            return newProductionOrderRepo.search(stringFilter);
-//        }
-//    }
+    public List<NewProductionOrder> findAll(String stringFilter) {
+        if (stringFilter == null || stringFilter.isEmpty()) {
+            return newProductionOrderRepo.findAll();
+        } else {
+            return newProductionOrderRepo.search(stringFilter);
+        }
+    }
 
 //    public List<NewProductionOrder> filterReady(Boolean value) {
 //        if (value == true) {
@@ -48,13 +48,13 @@ public class NewProductionOrderService {
 //        }
 //    }
 
-//    public List<NewProductionOrder> filterReadyAndEmpty(Boolean value) {
-//        if (value == true) {
-//            return newProductionOrderRepo.getNotReadyAndEmptyReadiness();
-//        } else {
-//            return newProductionOrderRepo.findAll();
-//        }
-//    }
+    public List<NewProductionOrder> getNotEndedOrders(Boolean value) {
+        if (value == true) {
+            return newProductionOrderRepo.getNotEndedOrders();
+        } else {
+            return newProductionOrderRepo.findAll();
+        }
+    }
 
 //    public List<NewProductionOrder> getNotReadyAndEmptyReadiness() {
 //        return newProductionOrderRepo.getNotReadyAndEmptyReadiness();

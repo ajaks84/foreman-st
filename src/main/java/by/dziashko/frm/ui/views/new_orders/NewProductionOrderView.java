@@ -2,7 +2,6 @@ package by.dziashko.frm.ui.views.new_orders;
 
 import by.dziashko.frm.backend.entity.newProductionOrder.NewProductionOrder;
 import by.dziashko.frm.backend.entity.newProductionOrder.ResponsiblePerson;
-import by.dziashko.frm.backend.entity.productionOrder.ProductionOrder;
 import by.dziashko.frm.backend.service.productionOrder.NewProductionOrderService;
 import by.dziashko.frm.backend.service.productionOrder.ResponsiblePersonService;
 import by.dziashko.frm.backend.service.utilities.DateNormalizerService;
@@ -18,6 +17,7 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
+import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.i18n.LocaleChangeEvent;
 import com.vaadin.flow.i18n.LocaleChangeObserver;
 import com.vaadin.flow.router.Route;
@@ -74,11 +74,10 @@ public class NewProductionOrderView extends VerticalLayout implements Serializab
         Div content = new Div(grid);
         content.addClassName("content");
         content.setSizeFull();
-        add(content);
-//        add(getToolbar(), content);
-//        searchInList();
+        add(getToolbar(), content);
+        searchInList();
 //        closeEditor();
-//        filterList(true);
+        filterList(true);
     }
 
     private void configureGrid() {
@@ -97,8 +96,8 @@ public class NewProductionOrderView extends VerticalLayout implements Serializab
                 .setHeader(getTranslation("Order_Delay")).setKey("ordegridrCol");
         grid.addColumn(NewProductionOrder::getPlanedDispatchDate).setHeader(getTranslation("Planed_Dispatch_Date"));
         grid.addColumn(NewProductionOrder::getPlanedOrderCompletionDate).setHeader(getTranslation("Planed_Order_Compl_Date"));
-        grid.addColumn(NewProductionOrder::getTermsOfDelivery).setHeader(getTranslation("Terms_Of_Delivery"));
-        grid.addColumn(newProductionOrder -> normalizeOrderStatusName(newProductionOrder.getOrderStatus())).setHeader(getTranslation("Order_Readiness")).setSortable(true);
+        //grid.addColumn(NewProductionOrder::getTermsOfDelivery).setHeader(getTranslation("Terms_Of_Delivery"));
+        grid.addColumn(newProductionOrder -> normalizeOrderStatusName(newProductionOrder.getOrderStatus())).setHeader(getTranslation("Order_Status")).setSortable(true);
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
         grid.addItemClickListener(event -> navigateTo(event.getItem()));
 //        grid.getColumnByKey("ordegridrCol").setClassNameGenerator(productionOrder -> {
@@ -112,26 +111,30 @@ public class NewProductionOrderView extends VerticalLayout implements Serializab
     }
 
     private HorizontalLayout getToolbar() {
-//        filterText.setPlaceholder(getTranslation("Filter"));
-//        filterText.setClearButtonVisible(true);
-//        filterText.setValueChangeMode(ValueChangeMode.LAZY);
-//        filterText.addValueChangeListener(e -> searchInList());
+        filterText.setPlaceholder(getTranslation("Filter"));
+        filterText.setClearButtonVisible(true);
+        filterText.setValueChangeMode(ValueChangeMode.LAZY);
+        filterText.addValueChangeListener(e -> searchInList());
 
 //        Button addOrderButton = new Button(getTranslation("New_Order"));
 //        addOrderButton.addClickListener(click -> addProductionOrder());
 
-//        checkbox.setLabel(getTranslation("Only_NOT_Ready_Orders"));
-//        checkbox.setValue(true);
-//        checkbox.addValueChangeListener(e -> filterList(e.getValue()));
+        checkbox.setLabel(getTranslation("NotEndedNotOnHold_Orders"));
+        checkbox.setValue(true);
+        checkbox.addValueChangeListener(e -> filterList(e.getValue()));
 
         HorizontalLayout toolbar = new HorizontalLayout(filterText, checkbox); //addOrderButton,
         toolbar.addClassName("toolbar");
         return toolbar;
     }
 
-//    private void searchInList() {
-//        grid.setItems(newProductionOrderService.findAll(filterText.getValue()));
-//    }
+    private void searchInList() {
+        grid.setItems(newProductionOrderService.findAll(filterText.getValue()));
+    }
+
+    private void filterList(Boolean value) {
+        grid.setItems(newProductionOrderService.getNotEndedOrders(value));
+    }
 
 //    void addProductionOrder() {
 //        grid.asSingleSelect().clear();
@@ -165,10 +168,6 @@ public class NewProductionOrderView extends VerticalLayout implements Serializab
 //        removeClassName("editing");
 //    }
 
-//    private void filterList(Boolean value) {
-//        grid.setItems(newProductionOrderService.filterReadyAndEmpty(value));
-//    }
-
     private String delayCalcReadiness(String date, NewProductionOrder.OrderStatus orderStatus) {
         return dateNormalizerService.calcDelayFromToday(date,orderStatus);
     }
@@ -177,8 +176,8 @@ public class NewProductionOrderView extends VerticalLayout implements Serializab
         if (newProductionOrder == null) {
             LOGGER.info("Can't navigate to production order");
         } else {
-            Long productionOrderID = newProductionOrder.getId();
-            grid.getUI().ifPresent(ui -> ui.navigate("order-details" + "/" + productionOrderID));
+            Long newProductionOrderId = newProductionOrder.getId();
+            grid.getUI().ifPresent(ui -> ui.navigate("new-order-details" + "/" + newProductionOrderId));
         }
     }
 

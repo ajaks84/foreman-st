@@ -1,10 +1,12 @@
-package by.dziashko.frm.ui.views.details;
+package by.dziashko.frm.ui.views.details.newProductionOrder;
 
+import by.dziashko.frm.backend.entity.newProductionOrder.NewProductionOrder;
+import by.dziashko.frm.backend.entity.newProductionOrder.ResponsiblePerson;
 import by.dziashko.frm.backend.entity.productionOrder.ProductionOrder;
 import by.dziashko.frm.backend.entity.productionOrder.Seller;
+import by.dziashko.frm.backend.service.productionOrder.NewProductionOrderService;
+import by.dziashko.frm.backend.service.productionOrder.ResponsiblePersonService;
 import by.dziashko.frm.backend.service.utilities.DateNormalizerService;
-import by.dziashko.frm.backend.service.productionOrder.ProductionOrderService;
-import by.dziashko.frm.backend.service.productionOrder.SellerService;
 import by.dziashko.frm.ui.views.main.MainView;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Key;
@@ -15,6 +17,7 @@ import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextArea;
@@ -28,24 +31,24 @@ import com.vaadin.flow.router.Route;
 
 import static org.hibernate.bytecode.BytecodeLogger.LOGGER;
 
-@Route(value = "order-details", layout = MainView.class)
+@Route(value = "new-order-details", layout = MainView.class)
 @CssImport("./styles/views/details/details-view.css")
-public class ProductionOrderDetailView extends VerticalLayout implements HasUrlParameter<Long> {
+public class NewProductionOrderDetailView extends VerticalLayout implements HasUrlParameter<Long> {
 
-    ProductionOrderService productionOrderService;
-    SellerService sellerService;
+    NewProductionOrderService newProductionOrderService;
+    ResponsiblePersonService responsiblePersonService;
     DateNormalizerService dateNormalizerService;
 
-    ProductionOrder productionOrder;
+    NewProductionOrder newProductionOrder;
     Long searchParam;
 
-    Binder<ProductionOrder> binder = new Binder<>(ProductionOrder.class);
+    Binder<NewProductionOrder> binder = new Binder<>(NewProductionOrder.class);
 
     Dialog dialogSave = new Dialog();
     Dialog dialogDelete = new Dialog();
     Dialog dialogReport = new Dialog();
 
-    ComboBox<Seller> seller = new ComboBox<>(getTranslation("Seller"));
+    ComboBox<ResponsiblePerson> responsiblePersonComboBox = new ComboBox<>(getTranslation("Seller"));
     TextField client = new TextField(getTranslation("Client"));
     TextField projectNumber = new TextField(getTranslation("Project_Number"));
     TextField orderNumber = new TextField(getTranslation("Order_Number"));
@@ -69,16 +72,17 @@ public class ProductionOrderDetailView extends VerticalLayout implements HasUrlP
     Button pdfReport = new Button(getTranslation("pdfReport"));
 
 
-    public ProductionOrderDetailView(SellerService sellerService, ProductionOrderService productionOrderService, DateNormalizerService dateNormalizerService) {
-        this.sellerService = sellerService;
-        this.productionOrderService = productionOrderService;
+    public NewProductionOrderDetailView(ResponsiblePersonService responsiblePersonService, NewProductionOrderService newProductionOrderService,
+                                        DateNormalizerService dateNormalizerService) {
+        this.responsiblePersonService = responsiblePersonService;
+        this.newProductionOrderService = newProductionOrderService;
         this.dateNormalizerService = dateNormalizerService;
         setId("order-details-view");
 
         binder.bindInstanceFields(this);
 
-        seller.setItems(sellerService.findAll());
-        seller.setItemLabelGenerator(Seller::getName);
+        responsiblePersonComboBox.setItems(responsiblePersonService.findAll());
+        responsiblePersonComboBox.setItemLabelGenerator(ResponsiblePerson::getName);
 
         orderReadiness.setItems(ProductionOrder.Readiness.values());
         cabinReadiness.setItems(ProductionOrder.Readiness.values());
@@ -89,7 +93,7 @@ public class ProductionOrderDetailView extends VerticalLayout implements HasUrlP
         additionalOptions.getStyle().set("maxHeight", "150px");
         additionalOptions.setWidth("400px");
 
-        HorizontalLayout layoutTop = new HorizontalLayout(seller, client, projectNumber, orderNumber, orderReadiness);
+        HorizontalLayout layoutTop = new HorizontalLayout(responsiblePersonComboBox, client, projectNumber, orderNumber, orderReadiness);
         HorizontalLayout layoutMiddle = new HorizontalLayout(orderDate, orderDeadLine, orderDelay, sendDate);
         HorizontalLayout layoutMiddle_2 = new HorizontalLayout(cabinType, cabinReadiness);
         HorizontalLayout layoutMiddle_3 = new HorizontalLayout(aspiratorType, aspiratorReadiness);
@@ -102,20 +106,20 @@ public class ProductionOrderDetailView extends VerticalLayout implements HasUrlP
 
     @Override
     public void setParameter(BeforeEvent beforeEvent, @OptionalParameter Long searchParam) {
-        if (searchParam == null && productionOrderService == null) {
+        if (searchParam == null && newProductionOrderService == null) {
         } else {
-            this.productionOrder
-                    = productionOrderService.find(searchParam);
+            this.newProductionOrder
+                    = newProductionOrderService.find(searchParam);
             this.searchParam = searchParam;
-            binder.readBean(this.productionOrder);
-            orderDelay.setValue(delayCalcReadiness(productionOrder.getOrderDeadLine(), productionOrder.getOrderReadiness()));
+            binder.readBean(this.newProductionOrder);
+            orderDelay.setValue(delayCalcReadiness(newProductionOrder.getOrderDeadLine(), newProductionOrder.getOrderStatus()));
             UI current = UI.getCurrent();
-            current.getPage().setTitle(getTranslation("Production_Order_Details") + " " + productionOrder.getClient());
+            current.getPage().setTitle(getTranslation("Production_Order_Details") + " " + newProductionOrder.getClient());
         }
     }
 
-    private String delayCalcReadiness(String date, ProductionOrder.Readiness readiness) {
-            return dateNormalizerService.delayCalcFromToday(date,readiness);
+    private String delayCalcReadiness(String date, NewProductionOrder.OrderStatus orderStatus) {
+        return dateNormalizerService.calcDelayFromToday(date,orderStatus);
     }
 
     private Component createButtonsLayout() {
@@ -152,13 +156,13 @@ public class ProductionOrderDetailView extends VerticalLayout implements HasUrlP
         Button cancelButtonThenSave = new Button(getTranslation("Cancel"), event -> dialogSave.close());
 
         HorizontalLayout top = new HorizontalLayout();
-        top.setJustifyContentMode(JustifyContentMode.CENTER);
+        top.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
         top.setPadding(true);
         top.setMargin(true);
         top.add(new Text(getTranslation("Confirm_Saving")));
         HorizontalLayout bottom = new HorizontalLayout();
         bottom.add(new HorizontalLayout(confirmButtonThenSave, cancelButtonThenSave));
-        bottom.setJustifyContentMode(JustifyContentMode.CENTER);
+        bottom.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
         dialogSave.add(top, bottom);
     }
 
@@ -172,13 +176,13 @@ public class ProductionOrderDetailView extends VerticalLayout implements HasUrlP
         });
         Button cancelButtonThenDelete = new Button(getTranslation("Cancel"), event -> dialogDelete.close());
         HorizontalLayout top = new HorizontalLayout();
-        top.setJustifyContentMode(JustifyContentMode.CENTER);
+        top.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
         top.setPadding(true);
         top.setMargin(true);
         top.add(new Text(getTranslation("Confirm_Deleting")));
         HorizontalLayout bottom = new HorizontalLayout();
         bottom.add(new HorizontalLayout(confirmButtonThenDelete, cancelButtonThenDelete));
-        bottom.setJustifyContentMode(JustifyContentMode.CENTER);
+        bottom.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
         dialogDelete.add(top, bottom);
     }
 
@@ -192,13 +196,13 @@ public class ProductionOrderDetailView extends VerticalLayout implements HasUrlP
         });
         Button cancelButtonThenDelete = new Button(getTranslation("Cancel"), event -> dialogReport.close());
         HorizontalLayout top = new HorizontalLayout();
-        top.setJustifyContentMode(JustifyContentMode.CENTER);
+        top.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
         top.setPadding(true);
         top.setMargin(true);
         top.add(new Text(getTranslation("dialogReport")));
         HorizontalLayout bottom = new HorizontalLayout();
         bottom.add(new HorizontalLayout(confirmButtonThenDelete, cancelButtonThenDelete));
-        bottom.setJustifyContentMode(JustifyContentMode.CENTER);
+        bottom.setJustifyContentMode(FlexComponent.JustifyContentMode.CENTER);
         dialogReport.add(top, bottom);
     }
 
@@ -208,23 +212,23 @@ public class ProductionOrderDetailView extends VerticalLayout implements HasUrlP
 
     private void saveOrderName() {
         try {
-            binder.writeBean(productionOrder);
-            productionOrderService.save(productionOrder);
+            binder.writeBean(newProductionOrder);
+            newProductionOrderService.save(newProductionOrder);
         } catch (ValidationException e) {
             e.printStackTrace();
         }
     }
 
     private void deleteOrderName() {
-        productionOrderService.delete(productionOrder);
+        newProductionOrderService.delete(newProductionOrder);
         goToPrevView();
     }
 
     private void generateReport() {
-        if (productionOrder == null) {
+        if (newProductionOrder == null) {
             LOGGER.info("Can't navigate to production order report");
         } else {
-            Long productionOrderID = productionOrder.getId();
+            Long productionOrderID = newProductionOrder.getId();
             this.getUI().ifPresent(ui -> ui.navigate("order-report" + "/" + productionOrderID));
         }
     }
