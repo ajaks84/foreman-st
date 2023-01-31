@@ -119,7 +119,7 @@ public class NewProductionOrderView extends VerticalLayout implements Serializab
 //        Button addOrderButton = new Button(getTranslation("New_Order"));
 //        addOrderButton.addClickListener(click -> addProductionOrder());
 
-        checkbox.setLabel(getTranslation("NotEndedNotOnHold_Orders"));
+        checkbox.setLabel(getTranslation("NotEnded_Orders"));
         checkbox.setValue(true);
         checkbox.addValueChangeListener(e -> filterList(e.getValue()));
 

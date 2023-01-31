@@ -2,11 +2,10 @@ package by.dziashko.frm.ui.views.details.newProductionOrder;
 
 import by.dziashko.frm.backend.entity.newProductionOrder.NewProductionOrder;
 import by.dziashko.frm.backend.entity.newProductionOrder.ResponsiblePerson;
-import by.dziashko.frm.backend.entity.productionOrder.ProductionOrder;
-import by.dziashko.frm.backend.entity.productionOrder.Seller;
 import by.dziashko.frm.backend.service.productionOrder.NewProductionOrderService;
 import by.dziashko.frm.backend.service.productionOrder.ResponsiblePersonService;
 import by.dziashko.frm.backend.service.utilities.DateNormalizerService;
+import by.dziashko.frm.backend.service.utilities.OrderStatusNameHandlerService;
 import by.dziashko.frm.ui.views.main.MainView;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Key;
@@ -20,7 +19,6 @@ import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.TextArea;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
@@ -38,6 +36,7 @@ public class NewProductionOrderDetailView extends VerticalLayout implements HasU
     NewProductionOrderService newProductionOrderService;
     ResponsiblePersonService responsiblePersonService;
     DateNormalizerService dateNormalizerService;
+    OrderStatusNameHandlerService orderStatusNameHandlerService;
 
     NewProductionOrder newProductionOrder;
     Long searchParam;
@@ -48,23 +47,18 @@ public class NewProductionOrderDetailView extends VerticalLayout implements HasU
     Dialog dialogDelete = new Dialog();
     Dialog dialogReport = new Dialog();
 
-    ComboBox<ResponsiblePerson> responsiblePersonComboBox = new ComboBox<>(getTranslation("Seller"));
     TextField client = new TextField(getTranslation("Client"));
     TextField projectNumber = new TextField(getTranslation("Project_Number"));
-    TextField orderNumber = new TextField(getTranslation("Order_Number"));
+    ComboBox<ResponsiblePerson> responsiblePerson = new ComboBox<>(getTranslation("ResponsiblePerson")); // do not use ComboBox in a variable name since you use binder
     TextField orderDate = new TextField(getTranslation("Order_Date"));
+
     TextField orderDeadLine = new TextField(getTranslation("Order_Deadline"));
-    TextField sendDate = new TextField(getTranslation("Order_Send_Date"));
     TextField orderDelay = new TextField(getTranslation("Order_Delay"));
-    ComboBox<ProductionOrder.Readiness> orderReadiness = new ComboBox<>(getTranslation("Order_Readiness"));
-    TextField cabinType = new TextField(getTranslation("cabin_type"));
-    ComboBox<ProductionOrder.Readiness> cabinReadiness = new ComboBox<>(getTranslation("Readiness"));
-    TextField aspiratorType = new TextField(getTranslation("aspirator_type"));
-    ComboBox<ProductionOrder.Readiness> aspiratorReadiness = new ComboBox<>(getTranslation("Readiness"));
-    TextField separatorType = new TextField(getTranslation("separator_type"));
-    ComboBox<ProductionOrder.Readiness> separatorReadiness = new ComboBox<>(getTranslation("Readiness"));
-    TextArea additionalOptions = new TextArea(getTranslation("additional_options"));
-    ComboBox<ProductionOrder.Readiness> additionalOptionsReadiness = new ComboBox<>(getTranslation("Readiness"));
+    TextField planedDispatchDate = new TextField(getTranslation("Planed_Dispatch_Date"));
+    TextField planedOrderCompletionDate = new TextField(getTranslation("Planed_Order_Compl_Date"));
+
+    TextField termsOfDelivery = new TextField(getTranslation("Terms_Of_Delivery"));
+    ComboBox<NewProductionOrder.OrderStatus> orderStatus = new ComboBox<>(getTranslation("Order_Status"));
 
     Button save = new Button(getTranslation("Save"));
     Button delete = new Button(getTranslation("Delete"));
@@ -73,34 +67,38 @@ public class NewProductionOrderDetailView extends VerticalLayout implements HasU
 
 
     public NewProductionOrderDetailView(ResponsiblePersonService responsiblePersonService, NewProductionOrderService newProductionOrderService,
-                                        DateNormalizerService dateNormalizerService) {
+                                        DateNormalizerService dateNormalizerService, OrderStatusNameHandlerService orderStatusNameHandlerService) {
         this.responsiblePersonService = responsiblePersonService;
         this.newProductionOrderService = newProductionOrderService;
         this.dateNormalizerService = dateNormalizerService;
+        this.orderStatusNameHandlerService=orderStatusNameHandlerService;
+
         setId("order-details-view");
 
         binder.bindInstanceFields(this);
 
-        responsiblePersonComboBox.setItems(responsiblePersonService.findAll());
-        responsiblePersonComboBox.setItemLabelGenerator(ResponsiblePerson::getName);
+        responsiblePerson.setItems(responsiblePersonService.findAll());
+        responsiblePerson.setItemLabelGenerator(ResponsiblePerson::getName);
 
-        orderReadiness.setItems(ProductionOrder.Readiness.values());
-        cabinReadiness.setItems(ProductionOrder.Readiness.values());
-        aspiratorReadiness.setItems(ProductionOrder.Readiness.values());
-        separatorReadiness.setItems(ProductionOrder.Readiness.values());
-        additionalOptionsReadiness.setItems(ProductionOrder.Readiness.values());
+
+//        orderStatus.setItems(NewProductionOrder.OrderStatus.values());
+        orderStatus.setItems(NewProductionOrder.OrderStatus.values());
+
+        System.out.println(orderStatus.getPlaceholder());
+//        orderStatus.getPlaceholder()
+
         orderDate.setReadOnly(false);
-        additionalOptions.getStyle().set("maxHeight", "150px");
-        additionalOptions.setWidth("400px");
+//        additionalOptions.getStyle().set("maxHeight", "150px");
+//        additionalOptions.setWidth("400px");
 
-        HorizontalLayout layoutTop = new HorizontalLayout(responsiblePersonComboBox, client, projectNumber, orderNumber, orderReadiness);
-        HorizontalLayout layoutMiddle = new HorizontalLayout(orderDate, orderDeadLine, orderDelay, sendDate);
-        HorizontalLayout layoutMiddle_2 = new HorizontalLayout(cabinType, cabinReadiness);
-        HorizontalLayout layoutMiddle_3 = new HorizontalLayout(aspiratorType, aspiratorReadiness);
-        HorizontalLayout layoutBottom = new HorizontalLayout(separatorType, separatorReadiness);
-        HorizontalLayout layoutBottom_2 = new HorizontalLayout(additionalOptions, additionalOptionsReadiness);
+        HorizontalLayout layoutTop = new HorizontalLayout(client, projectNumber, responsiblePerson, orderDate);
+        HorizontalLayout layoutMiddle = new HorizontalLayout( orderDeadLine, orderDelay, planedDispatchDate, planedOrderCompletionDate);
+        HorizontalLayout layoutMiddle_2 = new HorizontalLayout(termsOfDelivery, orderStatus);
+//        HorizontalLayout layoutMiddle_3 = new HorizontalLayout(aspiratorType, aspiratorReadiness);
+//        HorizontalLayout layoutBottom = new HorizontalLayout(separatorType, separatorReadiness);
+//        HorizontalLayout layoutBottom_2 = new HorizontalLayout(additionalOptions, additionalOptionsReadiness);
 
-        add(layoutTop, layoutMiddle, layoutMiddle_2, layoutMiddle_3, layoutBottom, layoutBottom_2, createButtonsLayout());
+        add(layoutTop, layoutMiddle, layoutMiddle_2,  createButtonsLayout()); //layoutMiddle_3, layoutBottom, layoutBottom_2,
 
     }
 
@@ -132,7 +130,7 @@ public class NewProductionOrderDetailView extends VerticalLayout implements HasU
 
         save.addClickListener(event -> dialogSave.open());
         delete.addClickListener(click -> dialogDelete.open());
-        back.addClickListener(click -> back.getUI().ifPresent(ui -> ui.navigate("orders")));
+        back.addClickListener(click -> back.getUI().ifPresent(ui -> ui.navigate("new_orders")));
         pdfReport.addClickListener(event -> dialogReport.open());
 
         binder.addStatusChangeListener(evt -> save.setEnabled(binder.isValid()));
@@ -207,7 +205,7 @@ public class NewProductionOrderDetailView extends VerticalLayout implements HasU
     }
 
     private void goToPrevView() {
-        this.getUI().ifPresent(ui -> ui.navigate("orders"));
+        this.getUI().ifPresent(ui -> ui.navigate("new_orders"));
     }
 
     private void saveOrderName() {
@@ -231,6 +229,10 @@ public class NewProductionOrderDetailView extends VerticalLayout implements HasU
             Long productionOrderID = newProductionOrder.getId();
             this.getUI().ifPresent(ui -> ui.navigate("order-report" + "/" + productionOrderID));
         }
+    }
+
+    private String normalizeOrderStatusName (NewProductionOrder.OrderStatus orderStatus){
+        return orderStatusNameHandlerService.normalizeOrderStatusName(orderStatus);
     }
 
 }
