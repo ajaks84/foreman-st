@@ -59,11 +59,20 @@ public class NewProductionOrderDetailView extends VerticalLayout implements HasU
 
     TextField termsOfDelivery = new TextField(getTranslation("Terms_Of_Delivery"));
     ComboBox<NewProductionOrder.OrderStatus> orderStatus = new ComboBox<>(getTranslation("Order_Status"));
+    TextField info = new TextField(getTranslation("info"));
+
+    //String orderDetailsRef = "";
+    TextField orderDetailsRef = new TextField(getTranslation("Terms_Of_Delivery"));
+
+    String orderBomRef = "";
+
 
     Button save = new Button(getTranslation("Save"));
     Button delete = new Button(getTranslation("Delete"));
     Button back = new Button(getTranslation("Back"));
     Button pdfReport = new Button(getTranslation("pdfReport"));
+
+    Button openDetailRef = new Button("open details");
 
 
     public NewProductionOrderDetailView(ResponsiblePersonService responsiblePersonService, NewProductionOrderService newProductionOrderService,
@@ -80,12 +89,8 @@ public class NewProductionOrderDetailView extends VerticalLayout implements HasU
         responsiblePerson.setItems(responsiblePersonService.findAll());
         responsiblePerson.setItemLabelGenerator(ResponsiblePerson::getName);
 
-
-//        orderStatus.setItems(NewProductionOrder.OrderStatus.values());
         orderStatus.setItems(NewProductionOrder.OrderStatus.values());
-
-        System.out.println(orderStatus.getPlaceholder());
-//        orderStatus.getPlaceholder()
+        orderStatus.setItemLabelGenerator(NewProductionOrder.OrderStatus::getStatus);
 
         orderDate.setReadOnly(false);
 //        additionalOptions.getStyle().set("maxHeight", "150px");
@@ -93,12 +98,14 @@ public class NewProductionOrderDetailView extends VerticalLayout implements HasU
 
         HorizontalLayout layoutTop = new HorizontalLayout(client, projectNumber, responsiblePerson, orderDate);
         HorizontalLayout layoutMiddle = new HorizontalLayout( orderDeadLine, orderDelay, planedDispatchDate, planedOrderCompletionDate);
-        HorizontalLayout layoutMiddle_2 = new HorizontalLayout(termsOfDelivery, orderStatus);
+        HorizontalLayout layoutMiddle_2 = new HorizontalLayout(termsOfDelivery, info, orderStatus);
 //        HorizontalLayout layoutMiddle_3 = new HorizontalLayout(aspiratorType, aspiratorReadiness);
 //        HorizontalLayout layoutBottom = new HorizontalLayout(separatorType, separatorReadiness);
 //        HorizontalLayout layoutBottom_2 = new HorizontalLayout(additionalOptions, additionalOptionsReadiness);
 
         add(layoutTop, layoutMiddle, layoutMiddle_2,  createButtonsLayout()); //layoutMiddle_3, layoutBottom, layoutBottom_2,
+
+
 
     }
 
@@ -110,6 +117,7 @@ public class NewProductionOrderDetailView extends VerticalLayout implements HasU
                     = newProductionOrderService.find(searchParam);
             this.searchParam = searchParam;
             binder.readBean(this.newProductionOrder);
+           //orderStatus.setValue(normalizeOrderStatusName(newProductionOrder.getOrderStatus()));
             orderDelay.setValue(delayCalcReadiness(newProductionOrder.getOrderDeadLine(), newProductionOrder.getOrderStatus()));
             UI current = UI.getCurrent();
             current.getPage().setTitle(getTranslation("Production_Order_Details") + " " + newProductionOrder.getClient());
@@ -124,6 +132,9 @@ public class NewProductionOrderDetailView extends VerticalLayout implements HasU
         save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         delete.addThemeVariants(ButtonVariant.LUMO_ERROR);
         back.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
+
+        openDetailRef.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        openDetailRef.addClickListener(event -> printRef());
 
         save.addClickShortcut(Key.ENTER);
         back.addClickShortcut(Key.ESCAPE);
@@ -140,7 +151,11 @@ public class NewProductionOrderDetailView extends VerticalLayout implements HasU
         createReportDialog();
         add(dialogSave, dialogDelete, dialogReport);
 
-        return new HorizontalLayout(save, delete, back, pdfReport);
+        return new HorizontalLayout( openDetailRef, back, pdfReport);//(save, delete, back, pdfReport);
+    }
+
+    private void printRef(){
+        System.out.println(orderDetailsRef.getValue());
     }
 
     private void createSaveDialog() {

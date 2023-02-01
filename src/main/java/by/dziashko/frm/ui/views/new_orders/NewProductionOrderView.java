@@ -96,7 +96,6 @@ public class NewProductionOrderView extends VerticalLayout implements Serializab
                 .setHeader(getTranslation("Order_Delay")).setKey("ordegridrCol");
         grid.addColumn(NewProductionOrder::getPlanedDispatchDate).setHeader(getTranslation("Planed_Dispatch_Date"));
         grid.addColumn(NewProductionOrder::getPlanedOrderCompletionDate).setHeader(getTranslation("Planed_Order_Compl_Date"));
-        //grid.addColumn(NewProductionOrder::getTermsOfDelivery).setHeader(getTranslation("Terms_Of_Delivery"));
         grid.addColumn(newProductionOrder -> normalizeOrderStatusName(newProductionOrder.getOrderStatus())).setHeader(getTranslation("Order_Status")).setSortable(true);
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
         grid.addItemClickListener(event -> navigateTo(event.getItem()));

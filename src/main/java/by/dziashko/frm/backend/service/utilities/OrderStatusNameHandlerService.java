@@ -51,4 +51,18 @@ public class OrderStatusNameHandlerService {
         if (orderStatus==NewProductionOrder.OrderStatus.OnHold) return "Wstrzymane!";
         return "";
     }
+
+    public String normalizeOrderStatusName(String orderStatus ){
+        if (orderStatus=="New") return "Nowe";
+        if (orderStatus=="AcceptedForProduction") return "Przyjęte do realizacji";
+        if (orderStatus=="Designing") return "Projektowanie";
+        if (orderStatus=="OrderingParts") return "Zamawianie elementów";
+        if (orderStatus=="ReadyForAssemble") return "Gotowość do montażu";
+        if (orderStatus=="Assembling") return "Montaż";
+        if (orderStatus=="ReadyForDispatch") return "Gotowe do wysyłki";
+        if (orderStatus=="Installation") return "Instalacja/Szkolenie";
+        if (orderStatus=="Ended") return "Zakończone";
+        if (orderStatus=="OnHold") return "Wstrzymane!";
+        return "";
+    }
 }
