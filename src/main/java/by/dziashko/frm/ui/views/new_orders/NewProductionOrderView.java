@@ -2,8 +2,8 @@ package by.dziashko.frm.ui.views.new_orders;
 
 import by.dziashko.frm.backend.entity.newProductionOrder.NewProductionOrder;
 import by.dziashko.frm.backend.entity.newProductionOrder.ResponsiblePerson;
-import by.dziashko.frm.backend.service.productionOrder.NewProductionOrderService;
-import by.dziashko.frm.backend.service.productionOrder.ResponsiblePersonService;
+import by.dziashko.frm.backend.service.newProductionOrder.NewProductionOrderService;
+import by.dziashko.frm.backend.service.newProductionOrder.ResponsiblePersonService;
 import by.dziashko.frm.backend.service.utilities.DateNormalizerService;
 import by.dziashko.frm.backend.service.utilities.OrderStatusNameHandlerService;
 import by.dziashko.frm.ui.forms.newProductionOrder.NewProductionOrderForm;

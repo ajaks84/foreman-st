@@ -1,4 +1,4 @@
-package by.dziashko.frm.backend.service.productionOrder;
+package by.dziashko.frm.backend.service.newProductionOrder;
 
 import by.dziashko.frm.backend.entity.newProductionOrder.NewProductionOrder;
 import by.dziashko.frm.backend.repo.newProductionOrder.NewProductionOrderRepo;

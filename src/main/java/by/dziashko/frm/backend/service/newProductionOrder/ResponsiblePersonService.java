@@ -1,7 +1,6 @@
-package by.dziashko.frm.backend.service.productionOrder;
+package by.dziashko.frm.backend.service.newProductionOrder;
 
 import by.dziashko.frm.backend.entity.newProductionOrder.ResponsiblePerson;
-import by.dziashko.frm.backend.entity.productionOrder.Seller;
 import by.dziashko.frm.backend.repo.newProductionOrder.ResponsiblePersonRepo;
 import org.springframework.stereotype.Service;
 

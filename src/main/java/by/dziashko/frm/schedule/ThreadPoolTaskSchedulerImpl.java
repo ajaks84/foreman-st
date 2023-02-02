@@ -1,6 +1,6 @@
 package by.dziashko.frm.schedule;
 
-import by.dziashko.frm.backend.service.productionOrder.NewProductionOrderService;
+import by.dziashko.frm.backend.service.newProductionOrder.NewProductionOrderService;
 import by.dziashko.frm.backend.service.productionOrder.ProductionOrderService;
 import by.dziashko.frm.backend.service.utilities.GoogleSheetsReaderService;
 import by.dziashko.frm.backend.service.utilities.NewGoogleSheetsReaderService;
@@ -56,7 +56,7 @@ public class ThreadPoolTaskSchedulerImpl {
             try {
                 googleSheetsReaderService.getSheetsData();
                 newGoogleSheetsReaderService.getSheetsData();
-
+                newGoogleSheetsReaderService.getCellData();
             } catch (GeneralSecurityException e) {
                 e.printStackTrace();
             } catch (IOException e) {
