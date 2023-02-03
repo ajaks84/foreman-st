@@ -54,15 +54,16 @@ public class ThreadPoolTaskSchedulerImpl {
 
             System.out.println("Runnable Task with " + message + " on thread " + Thread.currentThread().getName());
             try {
-                googleSheetsReaderService.getSheetsData();
-                newGoogleSheetsReaderService.getSheetsData();
-                newGoogleSheetsReaderService.getCellData();
+                //googleSheetsReaderService.getSheetsData();
+                //newGoogleSheetsReaderService.getSheetsData();
+                //newGoogleSheetsReaderService.getCellData();
+                newGoogleSheetsReaderService.getSheetData();
             } catch (GeneralSecurityException e) {
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            System.out.println("Reading data OK");
+            System.out.println("Lectura de datos OK");
         }
     }
 }

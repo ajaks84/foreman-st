@@ -44,8 +44,6 @@ public class NewGoogleSheetsReaderService {
         Sheets sheetsServiceUtilService = SheetsServiceUtil.getSheetsService();
         ValueRange response = sheetsServiceUtilService.spreadsheets().values().get(sheetId_st, range).execute();
 
-//        Spreadsheet response = sheetsServiceUtilService.spreadsheets().get(sheetId_st).execute();
-
         List<List<Object>> values = response.getValues();
         if (values == null || values.isEmpty()) {
             LOGGER.info("No data found.");
@@ -184,10 +182,12 @@ public class NewGoogleSheetsReaderService {
 
     public void getCellData() throws GeneralSecurityException, IOException {
         Sheets sheetsServiceUtilService = SheetsServiceUtil.getSheetsService();
-//        ValueRange response = sheetsServiceUtilService.spreadsheets().values().get(sheetId_st, range).execute();
         List<String> ranges = new ArrayList<>();
-        ranges.add("A2:M");
-        Spreadsheet spreadsheet = sheetsServiceUtilService.spreadsheets().get(sheetId_st).setRanges(ranges).execute();
+        ranges.add(range);
+        Spreadsheet spreadsheet = sheetsServiceUtilService.spreadsheets()
+                                                            .get(sheetId_st)
+                                                            .setRanges(ranges)
+                                                            .setIncludeGridData(true).execute(); //.setIncludeGridData(true) is important
 
         // 0 represents the first Sheet in your spreadsheet
         int sheetIndex = 0;
@@ -196,21 +196,60 @@ public class NewGoogleSheetsReaderService {
         GridData gridData = sheet.getData().get(0);
 
         // 1 represents the row 2 in your sheet
-        int row = 4;
+        int row = 8;
         RowData rowData = gridData.getRowData().get(row);
 
         // 1 represents the column M
-        int column = 10;
+        int column = 11;
         CellData cellData = rowData.getValues().get(column);
 
         // This will print the First sheet on my
         // spreadsheet cell B2 strikethrough value
         System.out.println(
-                cellData.getNote()
+                cellData.getHyperlink()
+                //cellData.getNote()
 //                        .getEffectiveFormat()
 //                        .getTextFormat()
 //                        .getStrikethrough()
         );
+
+    }
+
+    public void getSheetData() throws GeneralSecurityException, IOException {
+        Sheets sheetsServiceUtilService = SheetsServiceUtil.getSheetsService();
+        List<String> ranges = new ArrayList<>();
+        ranges.add(range);
+        Spreadsheet spreadsheet = sheetsServiceUtilService.spreadsheets()
+                .get(sheetId_st)
+                .setRanges(ranges)
+                .setIncludeGridData(true).execute(); //.setIncludeGridData(true) is important
+
+        // 0 represents the first Sheet in your spreadsheet
+        int sheetIndex = 0;
+
+        Sheet sheet = spreadsheet.getSheets().get(sheetIndex);
+        GridData gridData = sheet.getData().get(0);
+        //List<List<Object>> values=gridData.values();
+        System.out.println(gridData.getRowData().size());
+//        for (int row = 0; row<gridData.getRowData().size() ; row++)
+        for (int row = 0; row<10 ; row++)
+        {
+            List<CellData> cellData = gridData.getRowData().get(row).getValues();
+            if (!cellData.isEmpty()) {
+//                NewProductionOrder newProductionOrder = new NewProductionOrder();
+//                ResponsiblePerson responsiblePerson = new ResponsiblePerson();
+
+                //CELL 0
+                String client = cellData.get(0).getEffectiveValue().getStringValue();
+                System.out.println(client);
+
+                //CELL 1
+                String projectNumber = cellData.get(1).getEffectiveValue().getStringValue();
+                System.out.println(projectNumber);
+            }
+//            System.out.println(gridData.getRowData().get(row).getValues().get(0).getEffectiveValue().getStringValue());
+//            gridData.getRowData().get(row).getValues().toString();
+        }
 
     }
 
