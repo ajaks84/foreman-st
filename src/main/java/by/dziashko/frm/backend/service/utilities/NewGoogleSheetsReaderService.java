@@ -27,7 +27,7 @@ public class NewGoogleSheetsReaderService {
 
     String emptyMessage = "";
     String message = "brak danych";
-//    final String range = "Zlecenia !A2:M";
+    List<CellData> cellData = null;
     final String range = "A2:M";
 
     public NewGoogleSheetsReaderService(NewProductionOrderService newProductionOrderService,
@@ -231,13 +231,15 @@ public class NewGoogleSheetsReaderService {
         GridData gridData = sheet.getData().get(0);
         //List<List<Object>> values=gridData.values();
         System.out.println(gridData.getRowData().size());
+
 //        for (int row = 0; row<gridData.getRowData().size() ; row++)
         for (int row = 0; row<10 ; row++)
         {
-            List<CellData> cellData = gridData.getRowData().get(row).getValues();
+            cellData = gridData.getRowData().get(row).getValues();
+
             if (!cellData.isEmpty()) {
-//                NewProductionOrder newProductionOrder = new NewProductionOrder();
-//                ResponsiblePerson responsiblePerson = new ResponsiblePerson();
+                NewProductionOrder newProductionOrder = new NewProductionOrder();
+                ResponsiblePerson responsiblePerson = new ResponsiblePerson();
 
                 //CELL 0
                 String client = cellData.get(0).getEffectiveValue().getStringValue();
@@ -246,11 +248,235 @@ public class NewGoogleSheetsReaderService {
                 //CELL 1
                 String projectNumber = cellData.get(1).getEffectiveValue().getStringValue();
                 System.out.println(projectNumber);
+
+                //CELL 2   Attention, now the name consists of 2 words
+                String responsiblePersonName = cellData.get(2).getEffectiveValue().getStringValue();
+                String responsiblePersonNameTrailed = responsiblePersonName.stripTrailing();// Some resp. person names have spaces at the end...
+                if (Objects.equals(responsiblePersonNameTrailed, "")) {
+                    responsiblePersonNameTrailed = message;
+                }
+                String responsiblePersonNameTrailedCpt = responsiblePersonNameTrailed.substring(0, 1).toUpperCase() + responsiblePersonNameTrailed.substring(1);
+                System.out.println(responsiblePersonNameTrailedCpt);
+                //responsiblePerson.setName(responsiblePersonNameTrailedCpt); //Trailed and eventually capitalized
+
+                // Dates are already formatted, so there is no need in dateNormalizerService
+
+                //CELL 3
+                String orderDate = emptyMessage;
+                if (hasCellDataFormattedValue(3)) {
+                    newProductionOrder.setOrderDate(getCellDataFormattedValue(3));
+                    orderDate=getCellDataFormattedValue(3);
+                    System.out.println(orderDate);
+                }
+
+                //CELL 4
+                String orderDeadLine = emptyMessage;
+                if (hasCellDataFormattedValue(4)) {
+                    orderDeadLine=getCellDataFormattedValue(4);
+                    System.out.println(orderDeadLine);
+                }
+
+                //CELL 5
+                // there is no need to read cellData 5, cuz it's going to be calculated
+
+
+                //CELL 6
+                String planedDispatchDate = emptyMessage;
+                if (hasCellDataFormattedValue(6)) {
+                    planedDispatchDate=getCellDataFormattedValue(6);
+                    System.out.println(planedDispatchDate);
+                }
+
+                //CELL 7
+                String planedOrderCompletionDate = emptyMessage;
+                if (hasCellDataFormattedValue(7)) {
+                    planedOrderCompletionDate=getCellDataFormattedValue(7);
+                    System.out.println(planedOrderCompletionDate);
+                }
+
+                //CELL 8
+                String termsOfDelivery = emptyMessage;
+                if (hasCellDataEffectiveValue(8)) {
+                    termsOfDelivery = getCellDataStringValue(8);
+                    System.out.println(termsOfDelivery);
+                }
+
+                //CELL 9
+                String orderStatus = emptyMessage;
+                if (cellData.size() > 9) {
+                    orderStatus = cellData.get(9).getEffectiveValue().getStringValue();
+                    System.out.println(orderStatus);
+                }
+
+                //CELL 10
+                String info = emptyMessage;
+                if (cellData.size() > 10) {
+                    info = cellData.get(10).getNote();
+                    System.out.println(info);
+                }
+
+                //CELL 11
+                String orderDetailsRef = emptyMessage;
+                if (cellData.size() > 11) {
+                    orderDetailsRef = cellData.get(11).getHyperlink();
+                    System.out.println(orderDetailsRef);
+                }
+
+                //CELL 12
+                String orderBomRef = emptyMessage;
+                if (cellData.size() > 12) {
+                    orderBomRef = cellData.get(12).getHyperlink();
+                    System.out.println(orderBomRef);
+                }
             }
-//            System.out.println(gridData.getRowData().get(row).getValues().get(0).getEffectiveValue().getStringValue());
-//            gridData.getRowData().get(row).getValues().toString();
         }
 
+    }
+
+    public void getSheetDataAlt() throws GeneralSecurityException, IOException {
+        Sheets sheetsServiceUtilService = SheetsServiceUtil.getSheetsService();
+        List<String> ranges = new ArrayList<>();
+        ranges.add(range);
+        Spreadsheet spreadsheet = sheetsServiceUtilService.spreadsheets()
+                .get(sheetId_st)
+                .setRanges(ranges)
+                .setIncludeGridData(true).execute(); //.setIncludeGridData(true) is important
+
+        // 0 represents the first Sheet in your spreadsheet
+        int sheetIndex = 0;
+
+        Sheet sheet = spreadsheet.getSheets().get(sheetIndex);
+        GridData gridData = sheet.getData().get(0);
+        //List<List<Object>> values=gridData.values();
+        System.out.println(gridData.getRowData().size());
+
+//        for (int row = 0; row<gridData.getRowData().size() ; row++)
+        for (int row = 0; row<10 ; row++)
+        {
+            cellData = gridData.getRowData().get(row).getValues();
+
+            if (!cellData.isEmpty()) {
+                NewProductionOrder newProductionOrder = new NewProductionOrder();
+                ResponsiblePerson responsiblePerson = new ResponsiblePerson();
+
+                //CELL 0
+                if (hasCellDataEffectiveValue(0)) {
+                    newProductionOrder.setClient(getCellDataStringValue(0));
+                }
+
+                //CELL 8
+                if (hasCellDataEffectiveValue(1)) {
+                    newProductionOrder.setProjectNumber(getCellDataStringValue(1));
+                }
+
+                //CELL 2   Attention, now the name consists of 2 words
+                String responsiblePersonName = getCellDataStringValue(2);
+                String responsiblePersonNameTrailed = responsiblePersonName.stripTrailing();// Some resp. person names have spaces at the end...
+                if (Objects.equals(responsiblePersonNameTrailed, "")) {
+                    responsiblePersonNameTrailed = message;
+                }
+                String responsiblePersonNameTrailedCpt = responsiblePersonNameTrailed.substring(0, 1).toUpperCase() + responsiblePersonNameTrailed.substring(1);
+                //System.out.println(responsiblePersonNameTrailedCpt);
+                responsiblePerson.setName(responsiblePersonNameTrailedCpt); //Trailed and eventually capitalized
+
+                if (responsiblePersonService.find(responsiblePersonNameTrailedCpt) == null) {
+                    responsiblePersonService.save(responsiblePerson);
+                    newProductionOrder.setResponsiblePerson(responsiblePerson);
+                } else
+                    newProductionOrder.setResponsiblePerson(responsiblePersonService.find(responsiblePersonNameTrailedCpt));
+
+                // Dates are already formatted, so there is no need in dateNormalizerService
+
+                //CELL 3
+                if (hasCellDataFormattedValue(3)) {
+                    newProductionOrder.setOrderDate(getCellDataFormattedValue(3));
+                }
+
+                //CELL 4
+                if (hasCellDataFormattedValue(4)) {
+                    newProductionOrder.setOrderDeadLine(getCellDataFormattedValue(4));
+                }
+
+                //CELL 5
+                // there is no need to read cellData 5, cuz it's going to be calculated
+
+                //CELL 6
+                if (hasCellDataFormattedValue(6)) {
+                    newProductionOrder.setPlanedDispatchDate(getCellDataFormattedValue(6));
+                }
+
+                //CELL 7
+                if (hasCellDataFormattedValue(7)) {
+                    newProductionOrder.setPlanedOrderCompletionDate(getCellDataFormattedValue(7));
+                }
+
+                //CELL 8
+                if (hasCellDataEffectiveValue(8)) {
+                    newProductionOrder.setTermsOfDelivery(getCellDataStringValue(8));
+                }
+
+                //CELL 9
+                if (hasCellDataEffectiveValue(9)) {
+                    newProductionOrder.setOrderStatus(orderStatusNameHandlerService.setOrderStatus(getCellDataStringValue(9)));
+                }
+
+                //CELL 10
+                if (hasCellDataNote(10)) {
+                    newProductionOrder.setInfo(getCellDataNote(10));
+                }
+
+                //CELL 11
+                if (hasHyperLink(11)) {
+                    newProductionOrder.setOrderDetailsRef(getCellHyperLink(11));
+                }
+
+                //CELL 12
+                if (hasHyperLink(12)) {
+                    newProductionOrder.setOrderBomRef(getCellHyperLink(12));
+                }
+
+                try {
+                    if (!(newProductionOrder.getClient() =="")) {
+                        newProductionOrderService.save(newProductionOrder);}
+                } catch (Exception e) {
+                    LOGGER.info("Coś poszło nie tak podczas pobierania danych z GoogleSheets... ");
+                    e.printStackTrace();
+                }
+            }
+        }
+
+    }
+
+    private boolean hasCellDataEffectiveValue (int cellNumber){
+        return cellData.get(cellNumber).getEffectiveValue() != null;
+    }
+
+    private boolean hasCellDataFormattedValue (int cellNumber){
+        return cellData.get(cellNumber).getFormattedValue() != null;
+    }
+
+    private boolean hasCellDataNote (int cellNumber){
+        return cellData.get(cellNumber).getNote() != null;
+    }
+
+    private boolean hasHyperLink (int cellNumber){
+        return cellData.get(cellNumber).getHyperlink() != null;
+    }
+
+    private String getCellDataStringValue (int cellNumber){
+        return cellData.get(cellNumber).getEffectiveValue().getStringValue();
+        }
+
+    private String getCellDataFormattedValue (int cellNumber){
+        return     cellData.get(cellNumber).getFormattedValue();
+    }
+
+    private String getCellDataNote (int cellNumber){
+        return cellData.get(cellNumber).getNote();
+    }
+
+    private String getCellHyperLink (int cellNumber){
+        return cellData.get(cellNumber).getHyperlink();
     }
 
 }
