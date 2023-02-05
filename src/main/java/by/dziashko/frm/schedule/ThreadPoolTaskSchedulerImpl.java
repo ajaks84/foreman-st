@@ -51,14 +51,10 @@ public class ThreadPoolTaskSchedulerImpl {
         public void run() {
             productionOrderService.deleteAll();
             newProductionOrderService.deleteAll();
-
             System.out.println("Runnable Task with " + message + " on thread " + Thread.currentThread().getName());
             try {
-                //googleSheetsReaderService.getSheetsData();
-                //newGoogleSheetsReaderService.getSheetsData();
-                //newGoogleSheetsReaderService.getCellData();
-                //newGoogleSheetsReaderService.getSheetData();
-                newGoogleSheetsReaderService.getSheetDataAlt();
+                googleSheetsReaderService.getSheetsData();
+                newGoogleSheetsReaderService.getSheetData();
             } catch (GeneralSecurityException e) {
                 e.printStackTrace();
             } catch (IOException e) {

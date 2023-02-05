@@ -36,7 +36,6 @@ import static org.hibernate.bytecode.BytecodeLogger.LOGGER;
 
 @Scope("prototype")
 @Route(value = "orders", layout = MainView.class)
-//@RouteAlias(value = "", layout = MainView.class)
 @CssImport("./styles/views/order/order-view.css")
 @HtmlImport("/style.html")
 public class ProductionOrderView extends VerticalLayout implements Serializable, LocaleChangeObserver {

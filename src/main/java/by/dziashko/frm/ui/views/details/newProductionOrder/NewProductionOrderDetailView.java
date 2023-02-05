@@ -61,10 +61,8 @@ public class NewProductionOrderDetailView extends VerticalLayout implements HasU
     ComboBox<NewProductionOrder.OrderStatus> orderStatus = new ComboBox<>(getTranslation("Order_Status"));
     TextField info = new TextField(getTranslation("info"));
 
-    //String orderDetailsRef = "";
-    TextField orderDetailsRef = new TextField(getTranslation("Terms_Of_Delivery"));
-
-    String orderBomRef = "";
+    TextField orderDetailsRef = new TextField(getTranslation("Order_Details_Ref"));
+    TextField orderBomRef = new TextField(getTranslation("Order_BOM_Ref"));
 
 
     Button save = new Button(getTranslation("Save"));
@@ -84,6 +82,10 @@ public class NewProductionOrderDetailView extends VerticalLayout implements HasU
 
         setId("order-details-view");
 
+        client.setReadOnly(true);
+        //client.setWidth("400px");
+        client.setWidthFull();
+
         binder.bindInstanceFields(this);
 
         responsiblePerson.setItems(responsiblePersonService.findAll());
@@ -92,20 +94,17 @@ public class NewProductionOrderDetailView extends VerticalLayout implements HasU
         orderStatus.setItems(NewProductionOrder.OrderStatus.values());
         orderStatus.setItemLabelGenerator(NewProductionOrder.OrderStatus::getStatus);
 
-        orderDate.setReadOnly(false);
 //        additionalOptions.getStyle().set("maxHeight", "150px");
 //        additionalOptions.setWidth("400px");
 
         HorizontalLayout layoutTop = new HorizontalLayout(client, projectNumber, responsiblePerson, orderDate);
         HorizontalLayout layoutMiddle = new HorizontalLayout( orderDeadLine, orderDelay, planedDispatchDate, planedOrderCompletionDate);
-        HorizontalLayout layoutMiddle_2 = new HorizontalLayout(termsOfDelivery, info, orderStatus);
-//        HorizontalLayout layoutMiddle_3 = new HorizontalLayout(aspiratorType, aspiratorReadiness);
+        HorizontalLayout layoutMiddle_2 = new HorizontalLayout(termsOfDelivery, info, orderStatus, orderDetailsRef);
+//        HorizontalLayout layoutMiddle_3 = new HorizontalLayout(orderDetailsRef, orderBomRef);
 //        HorizontalLayout layoutBottom = new HorizontalLayout(separatorType, separatorReadiness);
 //        HorizontalLayout layoutBottom_2 = new HorizontalLayout(additionalOptions, additionalOptionsReadiness);
 
-        add(layoutTop, layoutMiddle, layoutMiddle_2,  createButtonsLayout()); //layoutMiddle_3, layoutBottom, layoutBottom_2,
-
-
+        add(layoutTop, layoutMiddle, layoutMiddle_2,   createButtonsLayout()); //layoutBottom, layoutBottom_2,layoutMiddle_3,
 
     }
 
@@ -117,7 +116,6 @@ public class NewProductionOrderDetailView extends VerticalLayout implements HasU
                     = newProductionOrderService.find(searchParam);
             this.searchParam = searchParam;
             binder.readBean(this.newProductionOrder);
-           //orderStatus.setValue(normalizeOrderStatusName(newProductionOrder.getOrderStatus()));
             orderDelay.setValue(delayCalcReadiness(newProductionOrder.getOrderDeadLine(), newProductionOrder.getOrderStatus()));
             UI current = UI.getCurrent();
             current.getPage().setTitle(getTranslation("Production_Order_Details") + " " + newProductionOrder.getClient());
