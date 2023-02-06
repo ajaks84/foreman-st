@@ -2,6 +2,7 @@ package by.dziashko.frm.ui.views.details.newProductionOrder;
 
 import by.dziashko.frm.backend.entity.newProductionOrder.NewProductionOrder;
 import by.dziashko.frm.backend.entity.newProductionOrder.ResponsiblePerson;
+import by.dziashko.frm.backend.entity.productionOrder.ProductionOrder;
 import by.dziashko.frm.backend.service.newProductionOrder.NewProductionOrderService;
 import by.dziashko.frm.backend.service.newProductionOrder.ResponsiblePersonService;
 import by.dziashko.frm.backend.service.utilities.DateNormalizerService;
@@ -26,6 +27,9 @@ import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.OptionalParameter;
 import com.vaadin.flow.router.Route;
+
+import java.util.Arrays;
+import java.util.List;
 
 import static org.hibernate.bytecode.BytecodeLogger.LOGGER;
 
@@ -70,7 +74,10 @@ public class NewProductionOrderDetailView extends VerticalLayout implements HasU
     Button back = new Button(getTranslation("Back"));
     Button pdfReport = new Button(getTranslation("pdfReport"));
 
-    Button openDetailRef = new Button("open details");
+    Button openDetailRef = new Button(getTranslation("Open_Details"));
+    Button openBomRef = new Button(getTranslation("Open_BOM"));
+
+    private final String widthVal = "300px";
 
 
     public NewProductionOrderDetailView(ResponsiblePersonService responsiblePersonService, NewProductionOrderService newProductionOrderService,
@@ -82,9 +89,13 @@ public class NewProductionOrderDetailView extends VerticalLayout implements HasU
 
         setId("order-details-view");
 
-        client.setReadOnly(true);
-        //client.setWidth("400px");
-        client.setWidthFull();
+        List <TextField> arrTextFields = Arrays.asList(client,projectNumber,orderDate,orderDeadLine,orderDelay,planedDispatchDate,
+                planedOrderCompletionDate,termsOfDelivery,info,orderDetailsRef,orderBomRef);
+
+        List <ComboBox> arrComboBox = Arrays.asList(responsiblePerson,orderStatus);
+
+        setTextFieldSettings(arrTextFields);
+        setComboBoxSettings(arrComboBox);
 
         binder.bindInstanceFields(this);
 
@@ -94,17 +105,11 @@ public class NewProductionOrderDetailView extends VerticalLayout implements HasU
         orderStatus.setItems(NewProductionOrder.OrderStatus.values());
         orderStatus.setItemLabelGenerator(NewProductionOrder.OrderStatus::getStatus);
 
-//        additionalOptions.getStyle().set("maxHeight", "150px");
-//        additionalOptions.setWidth("400px");
-
         HorizontalLayout layoutTop = new HorizontalLayout(client, projectNumber, responsiblePerson, orderDate);
         HorizontalLayout layoutMiddle = new HorizontalLayout( orderDeadLine, orderDelay, planedDispatchDate, planedOrderCompletionDate);
-        HorizontalLayout layoutMiddle_2 = new HorizontalLayout(termsOfDelivery, info, orderStatus, orderDetailsRef);
-//        HorizontalLayout layoutMiddle_3 = new HorizontalLayout(orderDetailsRef, orderBomRef);
-//        HorizontalLayout layoutBottom = new HorizontalLayout(separatorType, separatorReadiness);
-//        HorizontalLayout layoutBottom_2 = new HorizontalLayout(additionalOptions, additionalOptionsReadiness);
+        HorizontalLayout layoutBottom = new HorizontalLayout(termsOfDelivery, info, orderStatus);
 
-        add(layoutTop, layoutMiddle, layoutMiddle_2,   createButtonsLayout()); //layoutBottom, layoutBottom_2,layoutMiddle_3,
+        add(layoutTop, layoutMiddle, createMixedLayout(), createButtonsLayout()); //layoutBottom, layoutBottom_2,layoutMiddle_3,, layoutBottom
 
     }
 
@@ -131,9 +136,6 @@ public class NewProductionOrderDetailView extends VerticalLayout implements HasU
         delete.addThemeVariants(ButtonVariant.LUMO_ERROR);
         back.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
 
-        openDetailRef.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        openDetailRef.addClickListener(event -> printRef());
-
         save.addClickShortcut(Key.ENTER);
         back.addClickShortcut(Key.ESCAPE);
 
@@ -149,11 +151,29 @@ public class NewProductionOrderDetailView extends VerticalLayout implements HasU
         createReportDialog();
         add(dialogSave, dialogDelete, dialogReport);
 
-        return new HorizontalLayout( openDetailRef, back, pdfReport);//(save, delete, back, pdfReport);
+        return new HorizontalLayout( back, pdfReport);//(save, delete, back, pdfReport);
     }
 
-    private void printRef(){
+    private Component createMixedLayout(){
+        openDetailRef.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        openDetailRef.addClickListener(event -> navigateTo());
+
+        openBomRef.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        openBomRef.addClickListener(event -> navigateTo());
+
+        return new HorizontalLayout( openDetailRef, openBomRef); // termsOfDelivery, info, orderStatus,
+    }
+
+    private void navigateToDetails(){
         System.out.println(orderDetailsRef.getValue());
+    }
+
+    private void navigateTo() {
+        if (orderDetailsRef.getValue()=="") {
+            LOGGER.info("Can't navigate to production order");
+        } else {
+            this.getUI().ifPresent(ui -> ui.navigate(orderDetailsRef.getValue()));
+        }
     }
 
     private void createSaveDialog() {
@@ -244,8 +264,18 @@ public class NewProductionOrderDetailView extends VerticalLayout implements HasU
         }
     }
 
-    private String normalizeOrderStatusName (NewProductionOrder.OrderStatus orderStatus){
-        return orderStatusNameHandlerService.normalizeOrderStatusName(orderStatus);
+    private void setTextFieldSettings(List <TextField> compList){
+        for (TextField textField :compList) {
+            textField.setReadOnly(true);
+            textField.setWidth(widthVal);
+        }
+    }
+
+    private void setComboBoxSettings(List <ComboBox> compList){
+        for (ComboBox comboBox :compList) {
+            comboBox.setReadOnly(true);
+            comboBox.setWidth(widthVal);
+        }
     }
 
 }
