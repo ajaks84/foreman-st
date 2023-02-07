@@ -27,7 +27,16 @@ import com.vaadin.flow.router.BeforeEvent;
 import com.vaadin.flow.router.HasUrlParameter;
 import com.vaadin.flow.router.OptionalParameter;
 import com.vaadin.flow.router.Route;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.view.RedirectView;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -109,7 +118,7 @@ public class NewProductionOrderDetailView extends VerticalLayout implements HasU
         HorizontalLayout layoutMiddle = new HorizontalLayout( orderDeadLine, orderDelay, planedDispatchDate, planedOrderCompletionDate);
         HorizontalLayout layoutBottom = new HorizontalLayout(termsOfDelivery, info, orderStatus);
 
-        add(layoutTop, layoutMiddle, createMixedLayout(), createButtonsLayout()); //layoutBottom, layoutBottom_2,layoutMiddle_3,, layoutBottom
+        add(layoutTop, layoutMiddle,  layoutBottom, createMixedLayout(), createButtonsLayout()); // layoutBottom_2,layoutMiddle_3,, layoutBottom
 
     }
 
@@ -155,24 +164,34 @@ public class NewProductionOrderDetailView extends VerticalLayout implements HasU
     }
 
     private Component createMixedLayout(){
+
         openDetailRef.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        openDetailRef.addClickListener(event -> navigateTo());
+        openDetailRef.addClickListener(event ->  navigateTo(orderDetailsRef.getValue()));
+
+        LOGGER.info(orderDetailsRef.getValue());
+        LOGGER.info(orderBomRef.getValue());
+
+//        if (orderDetailsRef.getValue()=="") {
+//            openDetailRef.setEnabled(false);
+//        }
 
         openBomRef.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        openBomRef.addClickListener(event -> navigateTo());
+        openBomRef.addClickListener(event -> navigateTo(orderBomRef.getValue()));
+
+//        if (orderBomRef.getValue()=="") {
+//            openBomRef.setEnabled(false);
+//        }
 
         return new HorizontalLayout( openDetailRef, openBomRef); // termsOfDelivery, info, orderStatus,
     }
 
-    private void navigateToDetails(){
-        System.out.println(orderDetailsRef.getValue());
-    }
-
-    private void navigateTo() {
-        if (orderDetailsRef.getValue()=="") {
-            LOGGER.info("Can't navigate to production order");
+    private void navigateTo(String url) {
+        if (url=="") {
+            LOGGER.info("Can't navigate to external link: "+url);
+            openBomRef.setEnabled(false);
         } else {
-            this.getUI().ifPresent(ui -> ui.navigate(orderDetailsRef.getValue()));
+            LOGGER.info(url);
+            UI.getCurrent().getPage().setLocation(url);
         }
     }
 
