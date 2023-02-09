@@ -1,5 +1,6 @@
 package by.dziashko.frm.backend.service.utilities;
 
+import by.dziashko.frm.backend.entity.newProductionOrder.NewProductionOrder;
 import by.dziashko.frm.backend.entity.productionOrder.ProductionOrder;
 import com.itextpdf.text.*;
 import com.itextpdf.text.pdf.BaseFont;
@@ -25,6 +26,7 @@ public class PdfReportService {
     private static final Logger logger = LoggerFactory.getLogger(PdfReportService.class);
     private BaseFont bf;
     private ProductionOrder productionOrder;
+    private NewProductionOrder newProductionOrder;
 
     public PdfReportService() throws DocumentException, IOException {
         createFont();
@@ -46,6 +48,26 @@ public class PdfReportService {
                 addAspiratorPage(document);
             }
 
+            document.close();
+
+        } catch (DocumentException | IOException ex) {
+            logger.error("Error occurred: {0}", ex);
+        }
+        return new ByteArrayInputStream(out.toByteArray());
+    }
+
+    public ByteArrayInputStream generateNewPdfReport(NewProductionOrder newProductionOrder) {
+        this.newProductionOrder = newProductionOrder;
+
+        Document document = new Document();
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+
+        try {
+
+            PdfWriter.getInstance(document, out);
+            document.open();
+            addMetaData(document);
+            addMainPage(document);
             document.close();
 
         } catch (DocumentException | IOException ex) {
@@ -82,6 +104,31 @@ public class PdfReportService {
         tableOuter.addCell(createOuterPdfCell("Termin:", productionOrder.getOrderDeadLine(), 50, 60));
         tableOuter.addCell(createOuterPdfCell("Kabina:", productionOrder.getCabinType(), 30, 40));
         tableOuter.addCell(createOuterPdfCellNoCentering("Informacje dodatkowe:", productionOrder.getAdditionalOptions(), 20, 100));
+        tableOuter.addCell(createOuterPdfCell("Uwagi:", "", 25, 300));
+
+        document.add(tableOuter);
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        String username = user.getUsername();
+
+        Paragraph preface = new Paragraph();
+        addEmptyLine(preface, 1);
+        preface.add(new Paragraph(
+                "Raport wygenerował użytkownik: " + username + ".  Data: " + new Date(),
+                new Font(bf, 10)));
+
+        document.add(preface);
+        document.newPage();
+    }
+
+    private void addMainPage(Document document) throws DocumentException, IOException {
+
+        PdfPTable tableOuter = new PdfPTable(1);
+        tableOuter.setWidthPercentage(100);
+        tableOuter.addCell(createOuterPdfCell("Odbiorca:", newProductionOrder.getClient(), 50, 60));
+        tableOuter.addCell(createOuterPdfCell("Numer zamówienia:", newProductionOrder.getProjectNumber(), 40, 50));
+        tableOuter.addCell(createOuterPdfCell("Termin:", newProductionOrder.getOrderDeadLine(), 50, 60));
         tableOuter.addCell(createOuterPdfCell("Uwagi:", "", 25, 300));
 
         document.add(tableOuter);

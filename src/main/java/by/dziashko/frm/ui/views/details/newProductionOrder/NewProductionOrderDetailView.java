@@ -118,7 +118,7 @@ public class NewProductionOrderDetailView extends VerticalLayout implements HasU
         HorizontalLayout layoutMiddle = new HorizontalLayout( orderDeadLine, orderDelay, planedDispatchDate, planedOrderCompletionDate);
         HorizontalLayout layoutBottom = new HorizontalLayout(termsOfDelivery, info, orderStatus);
 
-        add(layoutTop, layoutMiddle,  layoutBottom, createMixedLayout(), createButtonsLayout()); // layoutBottom_2,layoutMiddle_3,, layoutBottom
+        add(layoutTop, layoutMiddle,  layoutBottom, createMixedLayout(), createButtonsLayout());
 
     }
 
@@ -166,32 +166,23 @@ public class NewProductionOrderDetailView extends VerticalLayout implements HasU
     private Component createMixedLayout(){
 
         openDetailRef.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        openDetailRef.addClickListener(event ->  navigateTo(orderDetailsRef.getValue()));
-
-        LOGGER.info(orderDetailsRef.getValue());
-        LOGGER.info(orderBomRef.getValue());
-
-//        if (orderDetailsRef.getValue()=="") {
-//            openDetailRef.setEnabled(false);
-//        }
+        openDetailRef.addClickListener(event ->  navigateTo(orderDetailsRef.getValue(), openDetailRef));
 
         openBomRef.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
-        openBomRef.addClickListener(event -> navigateTo(orderBomRef.getValue()));
+        openBomRef.addClickListener(event ->  navigateTo(orderBomRef.getValue(), openBomRef));
 
-//        if (orderBomRef.getValue()=="") {
-//            openBomRef.setEnabled(false);
-//        }
-
-        return new HorizontalLayout( openDetailRef, openBomRef); // termsOfDelivery, info, orderStatus,
+        return new HorizontalLayout( openDetailRef, openBomRef);
     }
 
-    private void navigateTo(String url) {
+    private void navigateTo(String url, Button button) {
         if (url=="") {
             LOGGER.info("Can't navigate to external link: "+url);
-            openBomRef.setEnabled(false);
+            button.addThemeVariants(ButtonVariant.LUMO_ERROR);
+            button.setEnabled(false);
         } else {
             LOGGER.info(url);
-            UI.getCurrent().getPage().setLocation(url);
+//            UI.getCurrent().getPage().setLocation(url);
+            UI.getCurrent().getPage().open(url);
         }
     }
 
@@ -278,8 +269,8 @@ public class NewProductionOrderDetailView extends VerticalLayout implements HasU
         if (newProductionOrder == null) {
             LOGGER.info("Can't navigate to production order report");
         } else {
-            Long productionOrderID = newProductionOrder.getId();
-            this.getUI().ifPresent(ui -> ui.navigate("order-report" + "/" + productionOrderID));
+            Long newProductionOrderId = newProductionOrder.getId();
+            this.getUI().ifPresent(ui -> ui.navigate("new-order-report" + "/" + newProductionOrderId));
         }
     }
 
