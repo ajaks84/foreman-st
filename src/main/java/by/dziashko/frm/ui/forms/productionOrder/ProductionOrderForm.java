@@ -1,6 +1,7 @@
 package by.dziashko.frm.ui.forms.productionOrder;
 
-import by.dziashko.frm.backend.entity.newProductionOrder.ResponsiblePerson;
+import by.dziashko.frm.backend.entity.aspirator.AspiratorData;
+import by.dziashko.frm.backend.entity.cabin.CabinData;
 import by.dziashko.frm.backend.entity.productionOrder.ProductionOrder;
 import by.dziashko.frm.backend.entity.productionOrder.Seller;
 import com.vaadin.flow.component.Component;
@@ -23,6 +24,9 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.List;
+import java.util.Objects;
+
+import static org.hibernate.bytecode.BytecodeLogger.LOGGER;
 
 public class ProductionOrderForm extends FormLayout {
 
@@ -31,7 +35,6 @@ public class ProductionOrderForm extends FormLayout {
     TextField orderNumber = new TextField(getTranslation("Order_Number"));
     TextField orderDate = new TextField();
     TextField orderDeadLine = new TextField();
-    ComboBox<ProductionOrder.Readiness> orderReadiness = new ComboBox<>(getTranslation("Readiness"));
 
     DatePicker orderDatePicker = new DatePicker(getTranslation("Order_Date"));
     DatePicker deadLineDatePicker = new DatePicker(getTranslation("Order_Deadline"));
@@ -39,31 +42,43 @@ public class ProductionOrderForm extends FormLayout {
     Button save = new Button(getTranslation("Save"));
     Button close = new Button(getTranslation("Cancel"));
 
+    ComboBox<CabinData> cabinData = new ComboBox<>(getTranslation("cabin_type"));
+
+    ComboBox<AspiratorData> aspiratorData = new ComboBox<>(getTranslation("aspirator_type"));
+
     Binder<ProductionOrder> binder = new Binder<>(ProductionOrder.class);
     private ProductionOrder productionOrder;
 
-    public ProductionOrderForm(List<Seller> sellers) {
+    public ProductionOrderForm(List<Seller> sellers, List<AspiratorData> aspirators, List<CabinData> cabins) {
         addClassName("contact-form");
 
         binder.bindInstanceFields(this);
-        orderReadiness.setItems(ProductionOrder.Readiness.values());
 
         setOrderDatePickers();
 
         client.setAutofocus(true);
 
-        orderDatePicker.addValueChangeListener(e ->
-                setOrderDate(e.getValue().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT))));
+        orderDatePicker.addValueChangeListener(e -> setOrderDate(e.getValue().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT))));
 
-
-        deadLineDatePicker.addValueChangeListener(e ->
-                setDeadLineDate(e.getValue().format( DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT) )));
+        deadLineDatePicker.addValueChangeListener(e -> setDeadLineDate(e.getValue().format( DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT) )));
 
         seller.setItems(sellers);
         seller.setItemLabelGenerator(Seller::getName);
-        VerticalLayout lyt = new VerticalLayout(seller, client, orderNumber, orderDatePicker, deadLineDatePicker,
-                createButtonsLayout());
-        add(lyt);
+
+        cabinData.setItems(cabins);
+        cabinData.setItemLabelGenerator(CabinData::getModelName);
+
+        aspiratorData.setItems(aspirators);
+        aspiratorData.setItemLabelGenerator(AspiratorData::getModelName);
+
+        HorizontalLayout horizontalLayout = new HorizontalLayout();
+
+        VerticalLayout verticalLayout_1 = new VerticalLayout(seller, client, orderNumber, orderDatePicker, deadLineDatePicker, createButtonsLayout());
+        VerticalLayout verticalLayout_2 = new VerticalLayout(cabinData, aspiratorData);
+
+        horizontalLayout.add(verticalLayout_1,verticalLayout_2);
+
+        add(horizontalLayout);
     }
 
     private void setOrderDate(String value) {
@@ -73,7 +88,6 @@ public class ProductionOrderForm extends FormLayout {
     private void setDeadLineDate(String value) {
         this.orderDeadLine.setValue(value);
     }
-
 
     public void setProductionOrder(ProductionOrder productionOrder) {
         this.productionOrder = productionOrder;
@@ -113,16 +127,13 @@ public class ProductionOrderForm extends FormLayout {
         deadLineDatePicker.setValue(LocalDate.now().plusWeeks(6));
     }
 
-    private void  navigateTo(String s) {
-        if (s == "") {
+    private void  navigateTo(String orderName) {
+        if (Objects.equals(orderName, "")) {
+            LOGGER.info("Coś poszło nie tak podczas pobierania danych z GoogleSheets... ");
         }else{
-            this.getUI().ifPresent(ui -> ui.navigate("order-details"+"/"+s));}
+            this.getUI().ifPresent(ui -> ui.navigate("order-details"+"/"+orderName));}
     }
 
-     public void clearDatePickers(){
-        deadLineDatePicker.clear();
-        orderDatePicker.clear();
-    }
 
     // Events
     public static abstract class OrderNameFormEvent extends ComponentEvent<ProductionOrderForm> {
@@ -157,8 +168,7 @@ public class ProductionOrderForm extends FormLayout {
         }
     }
 
-    public <T extends ComponentEvent<?>> Registration addListener(Class<T> eventType,
-                                                                  ComponentEventListener<T> listener) {
+    public <T extends ComponentEvent<?>> Registration addListener(Class<T> eventType, ComponentEventListener<T> listener) {
         return getEventBus().addListener(eventType, listener);
     }
 }

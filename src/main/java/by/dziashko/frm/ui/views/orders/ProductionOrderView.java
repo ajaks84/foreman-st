@@ -2,6 +2,8 @@ package by.dziashko.frm.ui.views.orders;
 
 import by.dziashko.frm.backend.entity.productionOrder.ProductionOrder;
 import by.dziashko.frm.backend.entity.productionOrder.Seller;
+import by.dziashko.frm.backend.service.aspirator.AspiratorDataService;
+import by.dziashko.frm.backend.service.cabin.CabinDataService;
 import by.dziashko.frm.backend.service.utilities.DateNormalizerService;
 import by.dziashko.frm.backend.service.productionOrder.ProductionOrderService;
 import by.dziashko.frm.backend.service.productionOrder.SellerService;
@@ -49,16 +51,23 @@ public class ProductionOrderView extends VerticalLayout implements Serializable,
     TextField filterText = new TextField();
     ProductionOrderForm form;
     Checkbox checkbox = new Checkbox();
+    AspiratorDataService aspiratorDataService;
+    CabinDataService cabinDataService;
+
     private static final String TD = "<td style=\"border: 1px solid lightgrey; width: 33.3%; padding: 3px;\">";
 
     private final DateNormalizerService dateNormalizerService;
 
     public ProductionOrderView(ProductionOrderService productionOrderService, SellerService sellerService,
-                               DateNormalizerService dateNormalizerService, OrderStatusNameHandlerService orderStatusNameHandlerService) {
+                               DateNormalizerService dateNormalizerService, OrderStatusNameHandlerService orderStatusNameHandlerService,
+                                AspiratorDataService aspiratorDataService, CabinDataService cabinDataService) {
+
         this.sellerService = sellerService;
         this.productionOrderService = productionOrderService;
         this.dateNormalizerService = dateNormalizerService;
-        this.orderStatusNameHandlerService=orderStatusNameHandlerService;
+        this.orderStatusNameHandlerService = orderStatusNameHandlerService;
+        this.aspiratorDataService = aspiratorDataService;
+        this.cabinDataService = cabinDataService;
 
         UI current = UI.getCurrent();
         current.getPage().setTitle(getTranslation("Orders_old"));
@@ -68,7 +77,7 @@ public class ProductionOrderView extends VerticalLayout implements Serializable,
         getToolbar();
         configureGrid();
 
-        form = new ProductionOrderForm(sellerService.findAll());
+        form = new ProductionOrderForm(sellerService.findAll(), aspiratorDataService.findAll(), cabinDataService.findAll());
         form.addListener(ProductionOrderForm.SaveEvent.class, this::saveProductionOrder);
         form.addListener(ProductionOrderForm.DeleteEvent.class, this::deleteProductionOrder);
         form.addListener(ProductionOrderForm.CloseEvent.class, e -> closeEditor());
@@ -209,9 +218,9 @@ public class ProductionOrderView extends VerticalLayout implements Serializable,
         return orderStatusNameHandlerService.normalizeOrderReadinessName(readiness);
     }
 
-    private int setBackGroundColor(String date) {
-        int color = 0;
-        return color;
-    }
+//    private int setBackGroundColor(String date) {
+//        int color = 0;
+//        return color;
+//    }
 
 }
