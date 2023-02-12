@@ -4,7 +4,7 @@
 /src/main/resources/
 /src/main/webapp/
 
-/src/main/by/dziashko/frm/security/
+**/security/
 
 .idea/
 .settings
