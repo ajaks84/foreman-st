@@ -1,8 +1,6 @@
 package by.dziashko.frm.ui.forms.cabin;
 
-import by.dziashko.frm.backend.entity.aspirator.AspiratorData;
 import by.dziashko.frm.backend.entity.cabin.CabinData;
-import by.dziashko.frm.ui.forms.aspirator.AspiratorDataForm;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;

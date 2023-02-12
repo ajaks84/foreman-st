@@ -56,10 +56,10 @@ public class CabinListView extends VerticalLayout implements LocaleChangeObserve
 
     private HorizontalLayout getToolbar() {
 
-        Button addContactButton = new Button(getTranslation("New_Aspirator"));
-        addContactButton.addClickListener(click -> addCabin());
+        Button addCabinButton = new Button(getTranslation("New_Aspirator"));
+        addCabinButton.addClickListener(click -> addCabin());
 
-        HorizontalLayout toolbar = new HorizontalLayout(addContactButton);
+        HorizontalLayout toolbar = new HorizontalLayout(addCabinButton);
         toolbar.addClassName("toolbar");
         return toolbar;
     }
@@ -69,29 +69,13 @@ public class CabinListView extends VerticalLayout implements LocaleChangeObserve
         grid.setSizeFull();
         grid.setColumns("modelName");
         grid.getColumnByKey("modelName").setHeader(getTranslation("modelName"));
-        grid.addColumn(orderName -> {
-            AspiratorBody aspiratorBody = orderName.getAspiratorBody();
-            return aspiratorBody == null ? "-" : aspiratorBody.getModelName();
-        }).setHeader(getTranslation("aspiratorBody")).setSortable(true);
-        grid.addColumn(orderName -> {
-            AspiratorFan aspiratorFan = orderName.getAspiratorFan();
-            return aspiratorFan == null ? "-" : aspiratorFan.getModelName();
-        }).setHeader(getTranslation("aspiratorFan")).setSortable(true);
-        grid.addColumn(orderName -> {
-            AspiratorElectric aspiratorElectric = orderName.getAspiratorElectric();
-            return aspiratorElectric == null ? "-" : aspiratorElectric.getModelName();
-        }).setHeader(getTranslation("aspiratorElectric")).setSortable(true);
-        grid.addColumn(orderName -> {
-            AspiratorOption aspiratorOption = orderName.getAspiratorOption();
-            return aspiratorOption == null ? "-" : aspiratorOption.getModelName();
-        }).setHeader(getTranslation("aspiratorOption")).setSortable(true);
         grid.getColumns().forEach(col -> col.setAutoWidth(false));
-        grid.addItemClickListener(event -> navigateTo(event.getItem()));
+//        grid.addItemClickListener(event -> navigateTo(event.getItem()));
     }
 
     void addCabin() {
         grid.asSingleSelect().clear();
-        editCabinData(new AspiratorData());
+        editCabinData(new CabinData());
     }
 
     private void updateList() {
@@ -108,12 +92,12 @@ public class CabinListView extends VerticalLayout implements LocaleChangeObserve
         }
     }
 
-    private void navigateTo(AspiratorData aspiratorData) {
-        if (aspiratorData == null) {
-            LOGGER.info("Can't navigate to aspirator");
+    private void navigateTo(AspiratorData cabinData) {
+        if (cabinData == null) {
+            LOGGER.info("Can't navigate to cabin");
         } else {
-            String s = aspiratorData.getModelName();
-            grid.getUI().ifPresent(ui -> ui.navigate("aspirator-details" + "/" + s));
+            String s = cabinData.getModelName();
+            grid.getUI().ifPresent(ui -> ui.navigate("cabin-details" + "/" + s));
         }
     }
 
@@ -124,14 +108,14 @@ public class CabinListView extends VerticalLayout implements LocaleChangeObserve
     }
 
     private void saveAspiratorData(CabinDataForm.SaveEvent event) {
-        cabinDataService.save(event.getAspiratorData());
+        cabinDataService.save(event.getCabinData());
         updateList();
         closeEditor();
     }
 
     @Override
     public void localeChange(LocaleChangeEvent localeChangeEvent) {
-
     }
+
 }
 

@@ -5,6 +5,7 @@ import by.dziashko.frm.ui.views.aspirator.bodys.AspiratorBodyListView;
 import by.dziashko.frm.ui.views.aspirator.electric.AspiratorElectricListView;
 import by.dziashko.frm.ui.views.aspirator.fans.AspiratorFanListView;
 import by.dziashko.frm.ui.views.aspirator.option.AspiratorOptionListView;
+import by.dziashko.frm.ui.views.cabin.CabinListView;
 import by.dziashko.frm.ui.views.new_orders.NewProductionOrderView;
 import by.dziashko.frm.ui.views.orders.ProductionOrderView;
 import by.dziashko.frm.ui.views.report.ReportView;
@@ -123,6 +124,7 @@ public class MainView extends AppLayout implements LocaleChangeObserver {
                 new RouterLink(getTranslation("Orders_old"), ProductionOrderView.class),
                 new RouterLink(getTranslation("Orders_new"), NewProductionOrderView.class),
                 new RouterLink(getTranslation("Report"), ReportView.class),
+                new RouterLink(getTranslation("Cabin_List"), CabinListView.class),
                 new RouterLink(getTranslation("Aspirator_List"), AspiratorListView.class),
                 new RouterLink(getTranslation("aspiratorBodyList"), AspiratorBodyListView.class),
                 new RouterLink(getTranslation("aspiratorFanList"), AspiratorFanListView.class),

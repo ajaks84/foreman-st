@@ -4,6 +4,8 @@
 /src/main/resources/
 /src/main/webapp/
 
+/src/main/by/dziashko/frm/security/SecurityConfiguration.java
+
 .idea/
 .settings
 .project
