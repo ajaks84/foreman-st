@@ -33,10 +33,10 @@ public class CabinDataForm extends FormLayout {
 
     }
 
-//    public void setOrderName(CabinData cabinData) {
-//        this.cabinData = cabinData;
-//        binder.readBean(cabinData);
-//    }
+    public void setOrderName(CabinData cabinData) {
+        this.cabinData = cabinData;
+        binder.readBean(cabinData);
+    }
 
     private Component createButtonsLayout() {
         save.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
