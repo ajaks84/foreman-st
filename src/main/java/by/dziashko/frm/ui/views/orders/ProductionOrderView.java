@@ -179,6 +179,7 @@ public class ProductionOrderView extends VerticalLayout implements Serializable,
         productionOrderService.save(event.getOrderName());
         searchInList();
         closeEditor();
+        navigateTo(productionOrderService.find(event.getOrderName().getOrderNumber()));
     }
 
     private void deleteProductionOrder(ProductionOrderForm.DeleteEvent event) {

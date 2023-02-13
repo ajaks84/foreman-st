@@ -4,6 +4,7 @@ import by.dziashko.frm.backend.entity.aspirator.AspiratorData;
 import by.dziashko.frm.backend.entity.cabin.CabinData;
 import by.dziashko.frm.backend.entity.productionOrder.ProductionOrder;
 import by.dziashko.frm.backend.entity.productionOrder.Seller;
+import by.dziashko.frm.backend.service.productionOrder.ProductionOrderService;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
@@ -19,6 +20,7 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.shared.Registration;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -39,12 +41,11 @@ public class ProductionOrderForm extends FormLayout {
     DatePicker orderDatePicker = new DatePicker(getTranslation("Order_Date"));
     DatePicker deadLineDatePicker = new DatePicker(getTranslation("Order_Deadline"));
 
+    ComboBox<CabinData> cabinData = new ComboBox<>(getTranslation("cabin_type"));
+    ComboBox<AspiratorData> aspiratorData = new ComboBox<>(getTranslation("aspirator_type"));
+
     Button save = new Button(getTranslation("Save"));
     Button close = new Button(getTranslation("Cancel"));
-
-    ComboBox<CabinData> cabinData = new ComboBox<>(getTranslation("cabin_type"));
-
-    ComboBox<AspiratorData> aspiratorData = new ComboBox<>(getTranslation("aspirator_type"));
 
     Binder<ProductionOrder> binder = new Binder<>(ProductionOrder.class);
     private ProductionOrder productionOrder;
@@ -67,9 +68,12 @@ public class ProductionOrderForm extends FormLayout {
 
         cabinData.setItems(cabins);
         cabinData.setItemLabelGenerator(CabinData::getModelName);
+        cabinData.addValueChangeListener(e -> setCabinData(e.getValue().getModelName()));
+
 
         aspiratorData.setItems(aspirators);
         aspiratorData.setItemLabelGenerator(AspiratorData::getModelName);
+        aspiratorData.addValueChangeListener(e -> setAspiratorData(e.getValue().getModelName()));
 
         HorizontalLayout horizontalLayout = new HorizontalLayout();
 
@@ -87,6 +91,14 @@ public class ProductionOrderForm extends FormLayout {
 
     private void setDeadLineDate(String value) {
         this.orderDeadLine.setValue(value);
+    }
+
+    private void setCabinData(String value) {
+        this.productionOrder.setCabinType(value);
+    }
+
+    private void setAspiratorData(String value) {
+        this.productionOrder.setAspiratorType(value);
     }
 
     public void setProductionOrder(ProductionOrder productionOrder) {
@@ -112,10 +124,8 @@ public class ProductionOrderForm extends FormLayout {
 
     private void validateAndSave() {
         try {
-            String orderNumberS = productionOrder.getOrderNumber();
             binder.writeBean(productionOrder);
             fireEvent(new SaveEvent(this, productionOrder));
-            navigateTo(orderNumberS);
         } catch (ValidationException e) {
             e.printStackTrace();
         }
@@ -126,14 +136,6 @@ public class ProductionOrderForm extends FormLayout {
         orderDatePicker.setValue(LocalDate.now());
         deadLineDatePicker.setValue(LocalDate.now().plusWeeks(6));
     }
-
-    private void  navigateTo(String orderName) {
-        if (Objects.equals(orderName, "")) {
-            LOGGER.info("Coś poszło nie tak podczas pobierania danych z GoogleSheets... ");
-        }else{
-            this.getUI().ifPresent(ui -> ui.navigate("order-details"+"/"+orderName));}
-    }
-
 
     // Events
     public static abstract class OrderNameFormEvent extends ComponentEvent<ProductionOrderForm> {
