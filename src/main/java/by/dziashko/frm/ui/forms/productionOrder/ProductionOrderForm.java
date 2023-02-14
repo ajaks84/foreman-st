@@ -4,7 +4,7 @@ import by.dziashko.frm.backend.entity.aspirator.AspiratorData;
 import by.dziashko.frm.backend.entity.cabin.CabinData;
 import by.dziashko.frm.backend.entity.productionOrder.ProductionOrder;
 import by.dziashko.frm.backend.entity.productionOrder.Seller;
-import by.dziashko.frm.backend.service.productionOrder.ProductionOrderService;
+import by.dziashko.frm.backend.service.utilities.DateNormalizerService;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
@@ -20,15 +20,12 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.shared.Registration;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.List;
-import java.util.Objects;
+import java.util.Locale;
 
-import static org.hibernate.bytecode.BytecodeLogger.LOGGER;
 
 public class ProductionOrderForm extends FormLayout {
 
@@ -38,8 +35,9 @@ public class ProductionOrderForm extends FormLayout {
     TextField orderDate = new TextField();
     TextField orderDeadLine = new TextField();
 
-    DatePicker orderDatePicker = new DatePicker(getTranslation("Order_Date"));
-    DatePicker deadLineDatePicker = new DatePicker(getTranslation("Order_Deadline"));
+    DatePicker orderDatePicker;
+    DatePicker deadLineDatePicker;
+    Locale normalizedLocale;
 
     ComboBox<CabinData> cabinData = new ComboBox<>(getTranslation("cabin_type"));
     ComboBox<AspiratorData> aspiratorData = new ComboBox<>(getTranslation("aspirator_type"));
@@ -49,19 +47,27 @@ public class ProductionOrderForm extends FormLayout {
 
     Binder<ProductionOrder> binder = new Binder<>(ProductionOrder.class);
     private ProductionOrder productionOrder;
+    DateNormalizerService dateNormalizerService;
 
-    public ProductionOrderForm(List<Seller> sellers, List<AspiratorData> aspirators, List<CabinData> cabins) {
+    public ProductionOrderForm(List<Seller> sellers, List<AspiratorData> aspirators, List<CabinData> cabins, DateNormalizerService dateNormalizerService) {
         addClassName("contact-form");
+
+        this.dateNormalizerService = dateNormalizerService;
+
+        orderDatePicker = new DatePicker(getTranslation("Order_Date"));
+        deadLineDatePicker = new DatePicker(getTranslation("Order_Deadline"));
+
+        normalizedLocale = new Locale("fi", "FI");
 
         binder.bindInstanceFields(this);
 
-        setOrderDatePickers();
+        //setOrderDatePickers();
 
         client.setAutofocus(true);
 
-        orderDatePicker.addValueChangeListener(e -> setOrderDate(e.getValue().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT))));
+        //orderDatePicker.addValueChangeListener(e -> setOrderDate(e.getValue().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT))));
 
-        deadLineDatePicker.addValueChangeListener(e -> setDeadLineDate(e.getValue().format( DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT) )));
+        //deadLineDatePicker.addValueChangeListener(e -> setDeadLineDate(e.getValue().format( DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT) )));
 
         seller.setItems(sellers);
         seller.setItemLabelGenerator(Seller::getName);
@@ -86,11 +92,11 @@ public class ProductionOrderForm extends FormLayout {
     }
 
     private void setOrderDate(String value) {
-        this.orderDate.setValue(value);
+        //this.orderDate.setValue(dateNormalizerService.getNormalizedDate(value));
     }
 
     private void setDeadLineDate(String value) {
-        this.orderDeadLine.setValue(value);
+        //this.orderDeadLine.setValue(dateNormalizerService.getNormalizedDate(value));
     }
 
     private void setCabinData(String value) {
@@ -103,7 +109,9 @@ public class ProductionOrderForm extends FormLayout {
 
     public void setProductionOrder(ProductionOrder productionOrder) {
         this.productionOrder = productionOrder;
-        setOrderDatePickers();
+//        orderDatePicker.setLocale(Locale.CANADA);
+//        deadLineDatePicker.setLocale(Locale.CANADA);
+//        setOrderDatePickers();
         binder.readBean(productionOrder);
     }
 
@@ -129,7 +137,6 @@ public class ProductionOrderForm extends FormLayout {
         } catch (ValidationException e) {
             e.printStackTrace();
         }
-
     }
 
     private void setOrderDatePickers(){

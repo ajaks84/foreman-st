@@ -77,7 +77,7 @@ public class ProductionOrderView extends VerticalLayout implements Serializable,
         getToolbar();
         configureGrid();
 
-        form = new ProductionOrderForm(sellerService.findAll(), aspiratorDataService.findAll(), cabinDataService.findAll());
+        form = new ProductionOrderForm(sellerService.findAll(), aspiratorDataService.findAll(), cabinDataService.findAll(), dateNormalizerService);
         form.addListener(ProductionOrderForm.SaveEvent.class, this::saveProductionOrder);
         form.addListener(ProductionOrderForm.DeleteEvent.class, this::deleteProductionOrder);
         form.addListener(ProductionOrderForm.CloseEvent.class, e -> closeEditor());
@@ -157,8 +157,8 @@ public class ProductionOrderView extends VerticalLayout implements Serializable,
                 sellerService.save(seller);
             }
             productionOrder.setSeller(seller);
-            productionOrder.setOrderDate(LocalDate.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)));
-            productionOrder.setOrderDeadLine(LocalDate.now().plusWeeks(6).format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)));
+            productionOrder.setOrderDate(dateNormalizerService.getNormalizedDate(LocalDate.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT))));
+            productionOrder.setOrderDeadLine(dateNormalizerService.getNormalizedDate(LocalDate.now().plusWeeks(6).format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT))));
             productionOrder.setOrderReadiness(ProductionOrder.Readiness.Nie_gotowe);
             form.setProductionOrder(productionOrder);
             form.setVisible(true);
