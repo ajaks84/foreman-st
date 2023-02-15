@@ -42,7 +42,7 @@ public class ProductionOrderService {
 
     public List<ProductionOrder> filterReady(Boolean value) {
         if (value == true) {
-            return productionOrderRepo.getByOrderReadiness(ProductionOrder.Readiness.Nie_gotowe);
+            return productionOrderRepo.getByOrderReadiness(ProductionOrder.Readiness.NotReady);
         } else {
             return productionOrderRepo.findAll();
         }

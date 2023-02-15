@@ -117,61 +117,61 @@ public class AboutView extends VerticalLayout {
                         productionOrder.setOrderDeadLine(orderDeadLine);
                         //Order Readiness
                         if (orderReadiness.contentEquals("Wysłane")) {
-                            productionOrder.setOrderReadiness(ProductionOrder.Readiness.Wysłane);
+                            productionOrder.setOrderReadiness(ProductionOrder.Readiness.Sent);
                         }
                         if (orderReadiness.contentEquals("Nie gotowe")) {
-                            productionOrder.setOrderReadiness(ProductionOrder.Readiness.Nie_gotowe);
+                            productionOrder.setOrderReadiness(ProductionOrder.Readiness.NotReady);
                         }
                         if (orderReadiness.contentEquals("Gotowe")) {
-                            productionOrder.setOrderReadiness(ProductionOrder.Readiness.Gotowe);
+                            productionOrder.setOrderReadiness(ProductionOrder.Readiness.Ready);
                         }
                         //Cabin Type
                         productionOrder.setCabinType(cabinType);
                         //Cabin Readiness
                         if (cabinReadiness.contentEquals("Wysłane")) {
-                            productionOrder.setCabinReadiness(ProductionOrder.Readiness.Wysłane);
+                            productionOrder.setCabinReadiness(ProductionOrder.Readiness.Sent);
                         }
                         if (cabinReadiness.contentEquals("Nie gotowe")) {
-                            productionOrder.setCabinReadiness(ProductionOrder.Readiness.Nie_gotowe);
+                            productionOrder.setCabinReadiness(ProductionOrder.Readiness.NotReady);
                         }
                         if (cabinReadiness.contentEquals("Gotowe")) {
-                            productionOrder.setCabinReadiness(ProductionOrder.Readiness.Gotowe);
+                            productionOrder.setCabinReadiness(ProductionOrder.Readiness.Ready);
                         }
                         //Aspirator Type
                         productionOrder.setAspiratorType(aspiratorType);
                         //Aspirator Readiness
                         if (aspiratorReadiness.contentEquals("Wysłane")) {
-                            productionOrder.setAspiratorReadiness(ProductionOrder.Readiness.Wysłane);
+                            productionOrder.setAspiratorReadiness(ProductionOrder.Readiness.Sent);
                         }
                         if (aspiratorReadiness.contentEquals("Nie gotowe")) {
-                            productionOrder.setAspiratorReadiness(ProductionOrder.Readiness.Nie_gotowe);
+                            productionOrder.setAspiratorReadiness(ProductionOrder.Readiness.NotReady);
                         }
                         if (aspiratorReadiness.contentEquals("Gotowe")) {
-                            productionOrder.setAspiratorReadiness(ProductionOrder.Readiness.Gotowe);
+                            productionOrder.setAspiratorReadiness(ProductionOrder.Readiness.Ready);
                         }
                         //Separator Type
                         productionOrder.setSeparatorType(separatorType);
                         //Separator Readiness
                         if (separatorReadiness.contentEquals("Wysłane")) {
-                            productionOrder.setSeparatorReadiness(ProductionOrder.Readiness.Wysłane);
+                            productionOrder.setSeparatorReadiness(ProductionOrder.Readiness.Sent);
                         }
                         if (separatorReadiness.contentEquals("Nie gotowe")) {
-                            productionOrder.setSeparatorReadiness(ProductionOrder.Readiness.Nie_gotowe);
+                            productionOrder.setSeparatorReadiness(ProductionOrder.Readiness.NotReady);
                         }
                         if (separatorReadiness.contentEquals("Gotowe")) {
-                            productionOrder.setSeparatorReadiness(ProductionOrder.Readiness.Gotowe);
+                            productionOrder.setSeparatorReadiness(ProductionOrder.Readiness.Ready);
                         }
                         //Additional Options
                         productionOrder.setAdditionalOptions(additionalOptions);
                         //Additional Options Readiness
                         if (AdditionalOptionsReadiness.contentEquals("Wysłane")) {
-                            productionOrder.setAdditionalOptionsReadiness(ProductionOrder.Readiness.Wysłane);
+                            productionOrder.setAdditionalOptionsReadiness(ProductionOrder.Readiness.Sent);
                         }
                         if (AdditionalOptionsReadiness.contentEquals("Nie gotowe")) {
-                            productionOrder.setAdditionalOptionsReadiness(ProductionOrder.Readiness.Nie_gotowe);
+                            productionOrder.setAdditionalOptionsReadiness(ProductionOrder.Readiness.NotReady);
                         }
                         if (AdditionalOptionsReadiness.contentEquals("Gotowe")) {
-                            productionOrder.setAdditionalOptionsReadiness(ProductionOrder.Readiness.Gotowe);
+                            productionOrder.setAdditionalOptionsReadiness(ProductionOrder.Readiness.Ready);
                         }
 
                         //Saving an order

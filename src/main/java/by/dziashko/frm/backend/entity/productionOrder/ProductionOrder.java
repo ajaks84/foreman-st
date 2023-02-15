@@ -9,9 +9,17 @@ import javax.validation.constraints.NotNull;
 @Entity
 public class ProductionOrder extends AbstractEntity implements Cloneable {
 
-    public enum Readiness {Gotowe, Nie_gotowe, Wysłane}  // You better find out how to i18N enums....
+    public enum Readiness { Ready("Gotowe"), NotReady("Nie gotowe"), Sent("Wysłane");
 
-    //public enum Readiness {Ready, NotReady, Sent}
+        private final String readiness;
+        Readiness(String readiness) {
+            this.readiness = readiness;
+        }
+
+        public String getReadiness(){
+            return readiness;
+        }
+    }
 
     //1.
     @ManyToOne

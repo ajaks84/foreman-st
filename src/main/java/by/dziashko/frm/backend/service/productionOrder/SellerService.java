@@ -47,10 +47,4 @@ public class SellerService {
         return sellerRepo.getByName(name);
     }
 
-//    public Map<String, Integer> getStats() {
-//        HashMap<String, Integer> stats = new HashMap<>();
-//        findAll().forEach(seller -> stats.put(seller.getName(), seller.getOrderNames().size()));
-//        return stats;
-//    }
-
 }

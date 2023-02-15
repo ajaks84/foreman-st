@@ -16,7 +16,7 @@ public interface ProductionOrderRepo extends JpaRepository<ProductionOrder, Long
 
     List<ProductionOrder> getByOrderReadiness(ProductionOrder.Readiness ready );
 
-    @Query("select c from ProductionOrder c where c.orderReadiness like 'Nie_gotowe' or c.orderReadiness IS NULL ")
+    @Query("select c from ProductionOrder c where c.orderReadiness like 'NotReady' or c.orderReadiness IS NULL ")
     List<ProductionOrder> getNotReadyAndEmptyReadiness();
 
     ProductionOrder getByOrderNumber(String orderNumber);

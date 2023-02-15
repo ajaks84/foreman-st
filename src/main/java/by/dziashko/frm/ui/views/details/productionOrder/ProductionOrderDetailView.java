@@ -1,5 +1,6 @@
 package by.dziashko.frm.ui.views.details.productionOrder;
 
+import by.dziashko.frm.backend.entity.newProductionOrder.NewProductionOrder;
 import by.dziashko.frm.backend.entity.productionOrder.ProductionOrder;
 import by.dziashko.frm.backend.entity.productionOrder.Seller;
 import by.dziashko.frm.backend.service.utilities.DateNormalizerService;
@@ -81,10 +82,16 @@ public class ProductionOrderDetailView extends VerticalLayout implements HasUrlP
         seller.setItemLabelGenerator(Seller::getName);
 
         orderReadiness.setItems(ProductionOrder.Readiness.values());
+        orderReadiness.setItemLabelGenerator(ProductionOrder.Readiness::getReadiness);
         cabinReadiness.setItems(ProductionOrder.Readiness.values());
+        cabinReadiness.setItemLabelGenerator(ProductionOrder.Readiness::getReadiness);
         aspiratorReadiness.setItems(ProductionOrder.Readiness.values());
+        aspiratorReadiness.setItemLabelGenerator(ProductionOrder.Readiness::getReadiness);
         separatorReadiness.setItems(ProductionOrder.Readiness.values());
+        separatorReadiness.setItemLabelGenerator(ProductionOrder.Readiness::getReadiness);
         additionalOptionsReadiness.setItems(ProductionOrder.Readiness.values());
+        additionalOptionsReadiness.setItemLabelGenerator(ProductionOrder.Readiness::getReadiness);
+
         orderDate.setReadOnly(false);
         additionalOptions.getStyle().set("maxHeight", "150px");
         additionalOptions.setWidth("400px");

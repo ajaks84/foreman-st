@@ -9,16 +9,16 @@ public class OrderStatusNameHandlerService {
 
     public ProductionOrder.Readiness setOrderReadiness(String orderStatus){
 
-        if (orderStatus.contentEquals("Wysłane")) return ProductionOrder.Readiness.Wysłane;
-        if (orderStatus.contentEquals("Nie gotowe")) return ProductionOrder.Readiness.Nie_gotowe;
-        if (orderStatus.contentEquals("Gotowe")) return ProductionOrder.Readiness.Gotowe;
+        if (orderStatus.contentEquals("Wysłane")) return ProductionOrder.Readiness.Sent;
+        if (orderStatus.contentEquals("Nie gotowe")) return ProductionOrder.Readiness.NotReady;
+        if (orderStatus.contentEquals("Gotowe")) return ProductionOrder.Readiness.Ready;
         return null;
     }
 
     public String normalizeOrderReadinessName(ProductionOrder.Readiness readiness ){
-        if (readiness==ProductionOrder.Readiness.Wysłane) return "Wysłane";
-        if (readiness==ProductionOrder.Readiness.Nie_gotowe) return "Nie gotowe";
-        if (readiness==ProductionOrder.Readiness.Gotowe) return "Gotowe";
+        if (readiness==ProductionOrder.Readiness.Sent) return "Wysłane";
+        if (readiness==ProductionOrder.Readiness.NotReady) return "Nie gotowe";
+        if (readiness==ProductionOrder.Readiness.Ready) return "Gotowe";
         return "";
     }
 
