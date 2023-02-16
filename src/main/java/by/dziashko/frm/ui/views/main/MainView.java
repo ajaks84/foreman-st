@@ -1,11 +1,13 @@
 package by.dziashko.frm.ui.views.main;
 
+import by.dziashko.frm.ui.views.addOptions.AdditionalOptionsListView;
 import by.dziashko.frm.ui.views.aspirator.aspirators.AspiratorListView;
 import by.dziashko.frm.ui.views.aspirator.bodys.AspiratorBodyListView;
 import by.dziashko.frm.ui.views.aspirator.electric.AspiratorElectricListView;
 import by.dziashko.frm.ui.views.aspirator.fans.AspiratorFanListView;
 import by.dziashko.frm.ui.views.aspirator.option.AspiratorOptionListView;
 import by.dziashko.frm.ui.views.cabin.CabinListView;
+import by.dziashko.frm.ui.views.cyclone.CycloneListView;
 import by.dziashko.frm.ui.views.new_orders.NewProductionOrderView;
 import by.dziashko.frm.ui.views.orders.ProductionOrderView;
 import by.dziashko.frm.ui.views.report.ReportView;
@@ -130,6 +132,8 @@ public class MainView extends AppLayout implements LocaleChangeObserver {
                 new RouterLink(getTranslation("aspiratorFanList"), AspiratorFanListView.class),
                 new RouterLink(getTranslation("aspiratorElectricList"), AspiratorElectricListView.class),
                 new RouterLink(getTranslation("aspiratorOptionList"), AspiratorOptionListView.class),
+                new RouterLink(getTranslation("Cyclone_List"), CycloneListView.class),
+                new RouterLink(getTranslation("addOptionList"), AdditionalOptionsListView.class),
                 new RouterLink(getTranslation("Service"), ServiceView.class)
         };
         return Arrays.stream(links).map(MainView::createTab).toArray(Tab[]::new);
