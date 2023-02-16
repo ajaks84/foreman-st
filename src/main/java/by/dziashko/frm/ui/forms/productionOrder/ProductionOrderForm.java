@@ -1,9 +1,12 @@
 package by.dziashko.frm.ui.forms.productionOrder;
 
+import by.dziashko.frm.backend.entity.addOptions.AdditionalOptions;
 import by.dziashko.frm.backend.entity.aspirator.AspiratorData;
 import by.dziashko.frm.backend.entity.cabin.CabinData;
+import by.dziashko.frm.backend.entity.cyclone.CycloneData;
 import by.dziashko.frm.backend.entity.productionOrder.ProductionOrder;
 import by.dziashko.frm.backend.entity.productionOrder.Seller;
+import by.dziashko.frm.ui.forms.cyclone.CycloneDataForm;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.ComponentEvent;
 import com.vaadin.flow.component.ComponentEventListener;
@@ -40,6 +43,8 @@ public class ProductionOrderForm extends FormLayout {
 
     ComboBox<CabinData> cabinData = new ComboBox<>(getTranslation("cabin_type"));
     ComboBox<AspiratorData> aspiratorData = new ComboBox<>(getTranslation("aspirator_type"));
+    ComboBox<CycloneData> cycloneData = new ComboBox<>(getTranslation("Cyclone_Type"));
+    //ComboBox<AdditionalOptions> additionalOptions = new ComboBox<>(getTranslation("Choose_Options"));
 
     Button save = new Button(getTranslation("Save"));
     Button close = new Button(getTranslation("Cancel"));
@@ -49,7 +54,7 @@ public class ProductionOrderForm extends FormLayout {
     Binder<ProductionOrder> binder = new Binder<>(ProductionOrder.class);
     private ProductionOrder productionOrder;
 
-    public ProductionOrderForm(List<Seller> sellers, List<AspiratorData> aspirators, List<CabinData> cabins) {
+    public ProductionOrderForm(List<Seller> sellers, List<AspiratorData> aspirators, List<CabinData> cabins, List<CycloneData> cyclones, List<AdditionalOptions> addOptions) {
         addClassName("contact-form");
 
         orderDatePicker = new DatePicker(getTranslation("Order_Date"));
@@ -63,10 +68,8 @@ public class ProductionOrderForm extends FormLayout {
 
         client.setAutofocus(true);
 
-        //orderDatePicker.addValueChangeListener(e -> setOrderDate(e.getValue().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT))));
         orderDatePicker.addValueChangeListener(e -> setOrderDate(String.valueOf(e.getValue())));
 
-        //deadLineDatePicker.addValueChangeListener(e -> setDeadLineDate(e.getValue().format( DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT) )));
         deadLineDatePicker.addValueChangeListener(e -> setDeadLineDate(String.valueOf(e.getValue())));
 
         seller.setItems(sellers);
@@ -81,14 +84,30 @@ public class ProductionOrderForm extends FormLayout {
         aspiratorData.setItemLabelGenerator(AspiratorData::getModelName);
         aspiratorData.addValueChangeListener(e -> setAspiratorData(e.getValue().getModelName()));
 
+        cycloneData.setItems(cyclones);
+        cycloneData.setItemLabelGenerator(CycloneData::getModelName);
+        cycloneData.addValueChangeListener(e -> setCycloneData(e.getValue().getModelName()));
+
+//        additionalOptions.setItems(addOptions);
+//        additionalOptions.setItemLabelGenerator(AdditionalOptions::getModelName);
+//        additionalOptions.addValueChangeListener(e -> setOptionsData(e.getValue().getModelName()));
+
         HorizontalLayout horizontalLayout = new HorizontalLayout();
 
         VerticalLayout verticalLayout_1 = new VerticalLayout(seller, client, orderNumber, orderDatePicker, deadLineDatePicker, createButtonsLayout());
-        VerticalLayout verticalLayout_2 = new VerticalLayout(cabinData, aspiratorData);
+        VerticalLayout verticalLayout_2 = new VerticalLayout(cabinData, aspiratorData, cycloneData);
 
         horizontalLayout.add(verticalLayout_1,verticalLayout_2);
 
         add(horizontalLayout);
+    }
+
+    private void setOptionsData(String modelName) {
+        this.productionOrder.setAdditionalOptions(modelName);
+    }
+
+    private void setCycloneData(String modelName) {
+        this.productionOrder.setSeparatorType(modelName);
     }
 
     private void setOrderDate(String value) {
