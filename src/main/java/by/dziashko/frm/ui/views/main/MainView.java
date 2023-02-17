@@ -17,6 +17,7 @@ import by.dziashko.frm.util.RandomNumberGenerator;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.accordion.Accordion;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.dependency.CssImport;
@@ -24,6 +25,7 @@ import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -117,6 +119,7 @@ public class MainView extends AppLayout implements LocaleChangeObserver {
         tabs.addThemeVariants(TabsVariant.LUMO_MINIMAL);
         tabs.setId("tabs");
         tabs.add(createMenuItems());
+        tabs.add(createAccordion());
         return tabs;
     }
 
@@ -132,11 +135,29 @@ public class MainView extends AppLayout implements LocaleChangeObserver {
                 new RouterLink(getTranslation("aspiratorFanList"), AspiratorFanListView.class),
                 new RouterLink(getTranslation("aspiratorElectricList"), AspiratorElectricListView.class),
                 new RouterLink(getTranslation("aspiratorOptionList"), AspiratorOptionListView.class),
-                new RouterLink(getTranslation("Cyclone_List"), CycloneListView.class),
-                new RouterLink(getTranslation("addOptionList"), AdditionalOptionsListView.class),
                 new RouterLink(getTranslation("Service"), ServiceView.class)
         };
         return Arrays.stream(links).map(MainView::createTab).toArray(Tab[]::new);
+    }
+
+    private Accordion createAccordion (){
+        Accordion accordion = new Accordion();
+
+        Tabs tbs = new Tabs();
+        tbs.setId("tabs");
+
+        tbs.setOrientation(Tabs.Orientation.VERTICAL);
+        tbs.addThemeVariants(TabsVariant.LUMO_MINIMAL);
+
+        Tab tb1 = new Tab(new RouterLink(getTranslation("Cyclone_List"), CycloneListView.class));
+        Tab tb2 = new Tab(new RouterLink(getTranslation("addOptionList"), AdditionalOptionsListView.class));
+
+        tbs.add(tb1, tb2);
+
+        accordion.add(getTranslation("Prod_order_elements"), tbs);
+        accordion.close();
+
+        return accordion;
     }
 
     private static Tab createTab(Component content) {
