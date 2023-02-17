@@ -169,6 +169,9 @@ public class ProductionOrderView extends VerticalLayout implements Serializable,
             productionOrder.setOrderDate(dateNormalizerService.getNormalizedDate(LocalDate.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT))));
             productionOrder.setOrderDeadLine(dateNormalizerService.getNormalizedDate(LocalDate.now().plusWeeks(6).format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT))));
             productionOrder.setOrderReadiness(ProductionOrder.Readiness.NotReady);
+            productionOrder.setCabinReadiness(ProductionOrder.Readiness.NotReady);
+            productionOrder.setAspiratorReadiness(ProductionOrder.Readiness.NotReady);
+            productionOrder.setSeparatorReadiness(ProductionOrder.Readiness.NotReady);
             form.setProductionOrder(productionOrder);
             form.setVisible(true);
             addClassName("editing");
