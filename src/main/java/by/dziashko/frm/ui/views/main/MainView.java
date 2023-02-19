@@ -25,7 +25,6 @@ import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Image;
-import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -118,29 +117,26 @@ public class MainView extends AppLayout implements LocaleChangeObserver {
         tabs.setOrientation(Tabs.Orientation.VERTICAL);
         tabs.addThemeVariants(TabsVariant.LUMO_MINIMAL);
         tabs.setId("tabs");
-        tabs.add(createMenuItems());
-        tabs.add(createAccordion());
+        Tab tb = new Tab();
+        tb.setEnabled(false);
+        tabs.add(tb);
+//        tabs.add(createMenuItems());
+        tabs.add(createAccordion_0());  //createMenuItems()
+        tabs.add(createAccordion_1());
+        tabs.add(createAccordion_2());
+        tabs.add(createAccordion_3());
         return tabs;
     }
 
-    private Component[] createMenuItems() {
-        RouterLink[] links = new RouterLink[]{
-                new RouterLink(getTranslation("Sellers_List"), SellersListView.class),
-                new RouterLink(getTranslation("Orders_old"), ProductionOrderView.class),
-                new RouterLink(getTranslation("Orders_new"), NewProductionOrderView.class),
-                new RouterLink(getTranslation("Report"), ReportView.class),
-                new RouterLink(getTranslation("Cabin_List"), CabinListView.class),
-                new RouterLink(getTranslation("Aspirator_List"), AspiratorListView.class),
-                new RouterLink(getTranslation("aspiratorBodyList"), AspiratorBodyListView.class),
-                new RouterLink(getTranslation("aspiratorFanList"), AspiratorFanListView.class),
-                new RouterLink(getTranslation("aspiratorElectricList"), AspiratorElectricListView.class),
-                new RouterLink(getTranslation("aspiratorOptionList"), AspiratorOptionListView.class),
-                new RouterLink(getTranslation("Service"), ServiceView.class)
-        };
-        return Arrays.stream(links).map(MainView::createTab).toArray(Tab[]::new);
-    }
+//    private Component[] createMenuItems() {
+//        RouterLink[] links = new RouterLink[]{
+//                new RouterLink(getTranslation("Orders_old"), ProductionOrderView.class),
+//                new RouterLink(getTranslation("Orders_new"), NewProductionOrderView.class)
+//        };
+//        return Arrays.stream(links).map(MainView::createTab).toArray(Tab[]::new);
+//    }
 
-    private Accordion createAccordion (){
+    private Accordion createAccordion_0(){
         Accordion accordion = new Accordion();
 
         Tabs tbs = new Tabs();
@@ -149,10 +145,34 @@ public class MainView extends AppLayout implements LocaleChangeObserver {
         tbs.setOrientation(Tabs.Orientation.VERTICAL);
         tbs.addThemeVariants(TabsVariant.LUMO_MINIMAL);
 
-        Tab tb1 = new Tab(new RouterLink(getTranslation("Cyclone_List"), CycloneListView.class));
-        Tab tb2 = new Tab(new RouterLink(getTranslation("addOptionList"), AdditionalOptionsListView.class));
+
+        Tab tb1 = new Tab(new RouterLink(getTranslation("Orders_new"), NewProductionOrderView.class));
+        Tab tb2 = new Tab(new RouterLink(getTranslation("Orders_old"), ProductionOrderView.class));
 
         tbs.add(tb1, tb2);
+        tbs.setSelectedTab(null);
+
+        accordion.add(getTranslation("Orders"), tbs);
+
+        return accordion;
+    }
+
+    private Accordion createAccordion_1(){
+        Accordion accordion = new Accordion();
+
+        Tabs tbs = new Tabs();
+        tbs.setId("tabs");
+
+        tbs.setOrientation(Tabs.Orientation.VERTICAL);
+        tbs.addThemeVariants(TabsVariant.LUMO_MINIMAL);
+
+        Tab tb1 = new Tab(new RouterLink(getTranslation("Cabin_List"), CabinListView.class));
+        Tab tb2 = new Tab(new RouterLink(getTranslation("Aspirator_List"), AspiratorListView.class));
+        Tab tb3 = new Tab(new RouterLink(getTranslation("Cyclone_List"), CycloneListView.class));
+        Tab tb4 = new Tab(new RouterLink(getTranslation("addOptionList"), AdditionalOptionsListView.class));
+
+        tbs.add(tb1, tb2, tb3, tb4);
+        tbs.setSelectedTab(null);
 
         accordion.add(getTranslation("Prod_order_elements"), tbs);
         accordion.close();
@@ -160,11 +180,58 @@ public class MainView extends AppLayout implements LocaleChangeObserver {
         return accordion;
     }
 
-    private static Tab createTab(Component content) {
-        final Tab tab = new Tab();
-        tab.add(content);
-        return tab;
+    private Accordion createAccordion_2(){
+        Accordion accordion = new Accordion();
+
+        Tabs tbs = new Tabs();
+        tbs.setId("tabs");
+
+        tbs.setOrientation(Tabs.Orientation.VERTICAL);
+        tbs.addThemeVariants(TabsVariant.LUMO_MINIMAL);
+
+        Tab tb1 = new Tab(new RouterLink(getTranslation("aspiratorBodyList"), AspiratorBodyListView.class));
+        Tab tb2 = new Tab(new RouterLink(getTranslation("aspiratorFanList"), AspiratorFanListView.class));
+        Tab tb3 = new Tab(new RouterLink(getTranslation("aspiratorElectricList"), AspiratorElectricListView.class));
+        Tab tb4 = new Tab(new RouterLink(getTranslation("aspiratorOptionList"), AspiratorOptionListView.class));
+
+        tbs.add(tb1, tb2, tb3, tb4);
+        tbs.setSelectedTab(null);
+
+        accordion.add(getTranslation("Aspirator_elements"), tbs);
+        accordion.close();
+
+
+        return accordion;
     }
+
+    private Accordion createAccordion_3(){
+        Accordion accordion = new Accordion();
+
+        Tabs tbs = new Tabs();
+        tbs.setId("tabs");
+
+        tbs.setOrientation(Tabs.Orientation.VERTICAL);
+        tbs.addThemeVariants(TabsVariant.LUMO_MINIMAL);
+
+        Tab tb1 = new Tab(new RouterLink(getTranslation("Sellers_List"), SellersListView.class));
+        Tab tb2 = new Tab(new RouterLink(getTranslation("Report"), ReportView.class));
+        Tab tb3 = new Tab(new RouterLink(getTranslation("Service"), ServiceView.class));
+
+        tbs.add(tb1, tb2, tb3);
+        tbs.setSelectedTab(null);
+
+        accordion.add(getTranslation("Service"), tbs);
+        accordion.close();
+
+
+        return accordion;
+    }
+
+//    private static Tab createTab(Component content) {
+//        final Tab tab = new Tab();
+//        tab.add(content);
+//        return tab;
+//    }
 
     @Override
     protected void afterNavigation() {
