@@ -56,7 +56,21 @@ public class MainView extends AppLayout implements LocaleChangeObserver {
 
     private final Tabs menu;
     private H1 viewTitle;
+    private Tab currTab;
 
+    private final Component[] links_1 = new RouterLink[]{ new RouterLink(getTranslation("Orders_old"), ProductionOrderView.class),
+                                            new RouterLink(getTranslation("Orders_new"), NewProductionOrderView.class) };
+    private final Component[] links_2 = new RouterLink[]{ new RouterLink(getTranslation("Cabin_List"), CabinListView.class),
+                                            new RouterLink(getTranslation("Aspirator_List"), AspiratorListView.class),
+                                            new RouterLink(getTranslation("Cyclone_List"), CycloneListView.class),
+                                            new RouterLink(getTranslation("addOptionList"), AdditionalOptionsListView.class) };
+    private final Component[] links_3 = new RouterLink[]{ new RouterLink(getTranslation("aspiratorBodyList"), AspiratorBodyListView.class),
+                                            new RouterLink(getTranslation("aspiratorFanList"), AspiratorFanListView.class),
+                                            new RouterLink(getTranslation("aspiratorElectricList"), AspiratorElectricListView.class),
+                                            new RouterLink(getTranslation("aspiratorOptionList"), AspiratorOptionListView.class) };
+    private final Component[] links_4 = new RouterLink[]{ new RouterLink(getTranslation("Sellers_List"), SellersListView.class),
+                                            new RouterLink(getTranslation("Report"), ReportView.class),
+                                            new RouterLink(getTranslation("Service"), ServiceView.class) };
     public MainView() {
         setPrimarySection(Section.DRAWER);
         addToNavbar(true, createHeaderContent());
@@ -120,118 +134,52 @@ public class MainView extends AppLayout implements LocaleChangeObserver {
         Tab tb = new Tab();
         tb.setEnabled(false);
         tabs.add(tb);
-//        tabs.add(createMenuItems());
-        tabs.add(createAccordion_0());  //createMenuItems()
-        tabs.add(createAccordion_1());
-        tabs.add(createAccordion_2());
-        tabs.add(createAccordion_3());
+        tabs.add(createAccordion(getTranslation("Orders"),true, true,links_1));
+        tabs.add(createAccordion(getTranslation("Prod_order_elements"),false, false,links_2));
+        tabs.add(createAccordion(getTranslation("Aspirator_elements"),false, false,links_3));
+        tabs.add(createAccordion(getTranslation("Service"),false, false,links_4));
+
         return tabs;
     }
 
-//    private Component[] createMenuItems() {
-//        RouterLink[] links = new RouterLink[]{
-//                new RouterLink(getTranslation("Orders_old"), ProductionOrderView.class),
-//                new RouterLink(getTranslation("Orders_new"), NewProductionOrderView.class)
-//        };
-//        return Arrays.stream(links).map(MainView::createTab).toArray(Tab[]::new);
-//    }
-
-    private Accordion createAccordion_0(){
+    private Accordion createAccordion(String accName, boolean open, boolean selectedTab, Component[] links){
         Accordion accordion = new Accordion();
-
         Tabs tbs = new Tabs();
         tbs.setId("tabs");
-
         tbs.setOrientation(Tabs.Orientation.VERTICAL);
         tbs.addThemeVariants(TabsVariant.LUMO_MINIMAL);
 
+        tbs.add(Arrays.stream(links).map(MainView::createTab).toArray(Tab[]::new));
 
-        Tab tb1 = new Tab(new RouterLink(getTranslation("Orders_new"), NewProductionOrderView.class));
-        Tab tb2 = new Tab(new RouterLink(getTranslation("Orders_old"), ProductionOrderView.class));
+        if (!selectedTab) {
+            tbs.setSelectedTab(null);
+        }
 
-        tbs.add(tb1, tb2);
-        tbs.setSelectedTab(null);
+        tbs.addSelectedChangeListener(selectedChangeEvent -> miniTest(selectedChangeEvent.getSelectedTab()));
 
-        accordion.add(getTranslation("Orders"), tbs);
+        accordion.add(accName, tbs);
+        //accordion.addOpenedChangeListener(openedChangeEvent -> miniTest(tbs));
+        if (!open) {
+            accordion.close();
+        }
 
         return accordion;
     }
 
-    private Accordion createAccordion_1(){
-        Accordion accordion = new Accordion();
-
-        Tabs tbs = new Tabs();
-        tbs.setId("tabs");
-
-        tbs.setOrientation(Tabs.Orientation.VERTICAL);
-        tbs.addThemeVariants(TabsVariant.LUMO_MINIMAL);
-
-        Tab tb1 = new Tab(new RouterLink(getTranslation("Cabin_List"), CabinListView.class));
-        Tab tb2 = new Tab(new RouterLink(getTranslation("Aspirator_List"), AspiratorListView.class));
-        Tab tb3 = new Tab(new RouterLink(getTranslation("Cyclone_List"), CycloneListView.class));
-        Tab tb4 = new Tab(new RouterLink(getTranslation("addOptionList"), AdditionalOptionsListView.class));
-
-        tbs.add(tb1, tb2, tb3, tb4);
-        tbs.setSelectedTab(null);
-
-        accordion.add(getTranslation("Prod_order_elements"), tbs);
-        accordion.close();
-
-        return accordion;
+    private void miniTest(Tab tas){
+        if (currTab!=null){
+        currTab.setSelected(false);}
+        currTab=tas;
+        System.out.println("check");
+        //tas.setSelected(false);
+        //tbs.setSelectedTab(null);
     }
 
-    private Accordion createAccordion_2(){
-        Accordion accordion = new Accordion();
-
-        Tabs tbs = new Tabs();
-        tbs.setId("tabs");
-
-        tbs.setOrientation(Tabs.Orientation.VERTICAL);
-        tbs.addThemeVariants(TabsVariant.LUMO_MINIMAL);
-
-        Tab tb1 = new Tab(new RouterLink(getTranslation("aspiratorBodyList"), AspiratorBodyListView.class));
-        Tab tb2 = new Tab(new RouterLink(getTranslation("aspiratorFanList"), AspiratorFanListView.class));
-        Tab tb3 = new Tab(new RouterLink(getTranslation("aspiratorElectricList"), AspiratorElectricListView.class));
-        Tab tb4 = new Tab(new RouterLink(getTranslation("aspiratorOptionList"), AspiratorOptionListView.class));
-
-        tbs.add(tb1, tb2, tb3, tb4);
-        tbs.setSelectedTab(null);
-
-        accordion.add(getTranslation("Aspirator_elements"), tbs);
-        accordion.close();
-
-
-        return accordion;
+    private static Tab createTab(Component content) {
+        final Tab tab = new Tab();
+        tab.add(content);
+        return tab;
     }
-
-    private Accordion createAccordion_3(){
-        Accordion accordion = new Accordion();
-
-        Tabs tbs = new Tabs();
-        tbs.setId("tabs");
-
-        tbs.setOrientation(Tabs.Orientation.VERTICAL);
-        tbs.addThemeVariants(TabsVariant.LUMO_MINIMAL);
-
-        Tab tb1 = new Tab(new RouterLink(getTranslation("Sellers_List"), SellersListView.class));
-        Tab tb2 = new Tab(new RouterLink(getTranslation("Report"), ReportView.class));
-        Tab tb3 = new Tab(new RouterLink(getTranslation("Service"), ServiceView.class));
-
-        tbs.add(tb1, tb2, tb3);
-        tbs.setSelectedTab(null);
-
-        accordion.add(getTranslation("Service"), tbs);
-        accordion.close();
-
-
-        return accordion;
-    }
-
-//    private static Tab createTab(Component content) {
-//        final Tab tab = new Tab();
-//        tab.add(content);
-//        return tab;
-//    }
 
     @Override
     protected void afterNavigation() {
