@@ -28,10 +28,6 @@ public class NewProductionOrderService {
         return newProductionOrderRepo.getById(id);
     }
 
-//    public NewProductionOrder find(String s) {
-//        return newProductionOrderRepo.getByOrderNumber(s);
-//    }
-
     public List<NewProductionOrder> findAll(String stringFilter) {
         if (stringFilter == null || stringFilter.isEmpty()) {
             return newProductionOrderRepo.findAll();
@@ -39,14 +35,6 @@ public class NewProductionOrderService {
             return newProductionOrderRepo.search(stringFilter);
         }
     }
-
-//    public List<NewProductionOrder> filterReady(Boolean value) {
-//        if (value == true) {
-//            return newProductionOrderRepo.getByOrderReadiness(NewProductionOrder.OrderStatus.Nie_gotowe);
-//        } else {
-//            return newProductionOrderRepo.findAll();
-//        }
-//    }
 
     public List<NewProductionOrder> getNotEndedOrders(Boolean value) {
         if (value == true) {
@@ -56,9 +44,13 @@ public class NewProductionOrderService {
         }
     }
 
-//    public List<NewProductionOrder> getNotReadyAndEmptyReadiness() {
-//        return newProductionOrderRepo.getNotReadyAndEmptyReadiness();
-//    }
+    public List<NewProductionOrder> getOrdersWithOrderingPartsStatus(Boolean value) {
+        if (value == true) {
+            return newProductionOrderRepo.getOrdersWithOrderingPartsStatus();
+        } else {
+            return newProductionOrderRepo.findAll();
+        }
+    }
 
     public long count() {
         return newProductionOrderRepo.count();

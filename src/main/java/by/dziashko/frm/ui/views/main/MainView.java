@@ -25,6 +25,7 @@ import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Image;
+import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -154,11 +155,10 @@ public class MainView extends AppLayout implements LocaleChangeObserver {
         if (!selectedTab) {
             tbs.setSelectedTab(null);
         }
-
+        // The listener doesn't work all the time. Probably I should add it to view?
         tbs.addSelectedChangeListener(selectedChangeEvent -> miniTest(selectedChangeEvent.getSelectedTab()));
 
         accordion.add(accName, tbs);
-        //accordion.addOpenedChangeListener(openedChangeEvent -> miniTest(tbs));
         if (!open) {
             accordion.close();
         }
@@ -168,11 +168,11 @@ public class MainView extends AppLayout implements LocaleChangeObserver {
 
     private void miniTest(Tab tas){
         if (currTab!=null){
-        currTab.setSelected(false);}
+            System.out.println("currTab :"+ tas.toString());
+            currTab.setSelected(false);
+        }
         currTab=tas;
-        System.out.println("check");
-        //tas.setSelected(false);
-        //tbs.setSelectedTab(null);
+        System.out.println("check :"+ tas.toString());
     }
 
     private static Tab createTab(Component content) {

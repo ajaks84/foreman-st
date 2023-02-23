@@ -13,12 +13,11 @@ public interface NewProductionOrderRepo extends JpaRepository<NewProductionOrder
     @Query("select c from NewProductionOrder c where lower(c.client) like lower(concat('%', :searchTerm, '%'))")
     List<NewProductionOrder> search(@Param("searchTerm") String searchTerm);
 
-//    List<NewProductionOrder> getByOrderReadiness(NewProductionOrder.OrderStatus ready );
-
     @Query("select c from NewProductionOrder c where  c.orderStatus not like 'Ended' ")
     List<NewProductionOrder> getNotEndedOrders();
 
-//    NewProductionOrder getByOrderNumber(String orderNumber);
+    @Query("select c from NewProductionOrder c where  c.orderStatus like 'OrderingParts' ")
+    List<NewProductionOrder> getOrdersWithOrderingPartsStatus();
 
     NewProductionOrder getById(Long id);
 

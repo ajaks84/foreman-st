@@ -6,7 +6,6 @@ import by.dziashko.frm.backend.service.newProductionOrder.NewProductionOrderServ
 import by.dziashko.frm.backend.service.newProductionOrder.ResponsiblePersonService;
 import by.dziashko.frm.backend.service.utilities.DateNormalizerService;
 import by.dziashko.frm.backend.service.utilities.OrderStatusNameHandlerService;
-import by.dziashko.frm.ui.forms.newProductionOrder.NewProductionOrderForm;
 import by.dziashko.frm.ui.views.main.MainView;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.checkbox.Checkbox;
@@ -43,8 +42,8 @@ public class NewProductionOrderView extends VerticalLayout implements Serializab
     ResponsiblePersonService responsiblePersonService;
     Grid<NewProductionOrder> grid = new Grid<>(NewProductionOrder.class);
     TextField filterText = new TextField();
-    NewProductionOrderForm form;
-    Checkbox checkbox = new Checkbox();
+    Checkbox checkboxReady = new Checkbox();
+    Checkbox checkboxOrdering = new Checkbox();
     private static final String TD = "<td style=\"border: 1px solid lightgrey; width: 33.3%; padding: 3px;\">";
 
     private final DateNormalizerService dateNormalizerService;
@@ -66,18 +65,12 @@ public class NewProductionOrderView extends VerticalLayout implements Serializab
         getToolbar();
         configureGrid();
 
-        form = new NewProductionOrderForm(responsiblePersonService.findAll());
-//        form.addListener(ProductionOrderForm.SaveEvent.class, this::saveProductionOrder);
-//        form.addListener(ProductionOrderForm.DeleteEvent.class, this::deleteProductionOrder);
-//        form.addListener(ProductionOrderForm.CloseEvent.class, e -> closeEditor());
-
         Div content = new Div(grid);
         content.addClassName("content");
         content.setSizeFull();
         add(getToolbar(), content);
         searchInList();
-//        closeEditor();
-        filterList(true);
+        filterListReady(true);
     }
 
     private void configureGrid() {
@@ -99,13 +92,6 @@ public class NewProductionOrderView extends VerticalLayout implements Serializab
         grid.addColumn(newProductionOrder -> normalizeOrderStatusName(newProductionOrder.getOrderStatus())).setHeader(getTranslation("Order_Status")).setSortable(true);
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
         grid.addItemClickListener(event -> navigateTo(event.getItem()));
-//        grid.getColumnByKey("ordegridrCol").setClassNameGenerator(productionOrder -> {
-//            if (!productionOrder.getOrderDeadLine().equals(" ")) {
-//                return "warn";
-//            }
-//            return null;
-//        });
-
         grid.setItems(newProductionOrderService.findAll());
     }
 
@@ -115,14 +101,13 @@ public class NewProductionOrderView extends VerticalLayout implements Serializab
         filterText.setValueChangeMode(ValueChangeMode.LAZY);
         filterText.addValueChangeListener(e -> searchInList());
 
-//        Button addOrderButton = new Button(getTranslation("New_Order"));
-//        addOrderButton.addClickListener(click -> addProductionOrder());
+        checkboxReady.setLabel(getTranslation("NotEnded_Orders"));
+        checkboxReady.addValueChangeListener(e -> filterListReady(e.getValue()));
 
-        checkbox.setLabel(getTranslation("NotEnded_Orders"));
-        checkbox.setValue(true);
-        checkbox.addValueChangeListener(e -> filterList(e.getValue()));
+        checkboxOrdering.setLabel(getTranslation("Orders_DetOrdering"));
+        checkboxOrdering.addValueChangeListener(e -> filterListWithOrderingPartsStatus(e.getValue()));
 
-        HorizontalLayout toolbar = new HorizontalLayout(filterText, checkbox); //addOrderButton,
+        HorizontalLayout toolbar = new HorizontalLayout(filterText, checkboxReady, checkboxOrdering);
         toolbar.addClassName("toolbar");
         return toolbar;
     }
@@ -131,41 +116,17 @@ public class NewProductionOrderView extends VerticalLayout implements Serializab
         grid.setItems(newProductionOrderService.findAll(filterText.getValue()));
     }
 
-    private void filterList(Boolean value) {
+    private void filterListReady(Boolean value) {
+//        checkboxOrdering.setValue(false);
+        checkboxReady.setValue(true);
         grid.setItems(newProductionOrderService.getNotEndedOrders(value));
     }
 
-//    void addProductionOrder() {
-//        grid.asSingleSelect().clear();
-//        createNewProductionOrder(new ProductionOrder());
-//    }
-
-//    public void createNewProductionOrder(ProductionOrder productionOrder) {
-//        if (productionOrder == null) {
-//            closeEditor();
-//        } else {
-//            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//            User user = (User) authentication.getPrincipal();
-//            Seller seller = responsiblePersonService.find(user.getUsername());
-//            if (seller == null) {
-//                seller = new Seller(user.getUsername());
-//                responsiblePersonService.save(seller);
-//            }
-//            productionOrder.setSeller(seller);
-//            productionOrder.setOrderDate(LocalDate.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)));
-//            productionOrder.setOrderDeadLine(LocalDate.now().plusWeeks(6).format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT)));
-//            productionOrder.setOrderReadiness(ProductionOrder.Readiness.Nie_gotowe);
-//            form.setProductionOrder(productionOrder);
-//            form.setVisible(true);
-//            addClassName("editing");
-//        }
-//    }
-
-//    private void closeEditor() {
-//        form.setProductionOrder(null);
-//        form.setVisible(false);
-//        removeClassName("editing");
-//    }
+    private void filterListWithOrderingPartsStatus(Boolean value) {
+        checkboxReady.setValue(false);
+        checkboxOrdering.setValue(true);
+        grid.setItems(newProductionOrderService.getOrdersWithOrderingPartsStatus(value));
+    }
 
     private String delayCalcReadiness(String date, NewProductionOrder.OrderStatus orderStatus) {
         return dateNormalizerService.calcDelayFromToday(date,orderStatus);
@@ -183,18 +144,6 @@ public class NewProductionOrderView extends VerticalLayout implements Serializab
     private String normalizeOrderStatusName (NewProductionOrder.OrderStatus orderStatus){
         return orderStatusNameHandlerService.normalizeOrderStatusName(orderStatus);
     }
-
-//    private void saveProductionOrder(ProductionOrderForm.SaveEvent event) {
-//        newProductionOrderService.save(event.getOrderName());
-//        searchInList();
-//        closeEditor();
-//    }
-//
-//    private void deleteProductionOrder(ProductionOrderForm.DeleteEvent event) {
-//        newProductionOrderService.delete(event.getOrderName());
-//        searchInList();
-//        closeEditor();
-//    }
 
     @Override
     public void localeChange(LocaleChangeEvent localeChangeEvent) {
