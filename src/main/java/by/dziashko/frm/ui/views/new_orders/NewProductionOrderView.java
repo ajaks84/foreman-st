@@ -92,7 +92,7 @@ public class NewProductionOrderView extends VerticalLayout implements Serializab
         grid.addColumn(newProductionOrder -> normalizeOrderStatusName(newProductionOrder.getOrderStatus())).setHeader(getTranslation("Order_Status")).setSortable(true);
         grid.getColumns().forEach(col -> col.setAutoWidth(true));
         grid.addItemClickListener(event -> navigateTo(event.getItem()));
-        grid.setItems(newProductionOrderService.findAll());
+        getAllElements();
     }
 
     private HorizontalLayout getToolbar() {
@@ -116,16 +116,30 @@ public class NewProductionOrderView extends VerticalLayout implements Serializab
         grid.setItems(newProductionOrderService.findAll(filterText.getValue()));
     }
 
+    private void getAllElements(){
+        grid.setItems(newProductionOrderService.findAll());
+    }
+
     private void filterListReady(Boolean value) {
-//        checkboxOrdering.setValue(false);
+        if (value) {
+        checkboxOrdering.setValue(false);
         checkboxReady.setValue(true);
-        grid.setItems(newProductionOrderService.getNotEndedOrders(value));
+        grid.setItems(newProductionOrderService.getNotEndedOrders(true));}
+        else {
+            checkboxReady.setValue(false);
+            getAllElements();
+        }
     }
 
     private void filterListWithOrderingPartsStatus(Boolean value) {
+        if (value) {
         checkboxReady.setValue(false);
         checkboxOrdering.setValue(true);
-        grid.setItems(newProductionOrderService.getOrdersWithOrderingPartsStatus(value));
+        grid.setItems(newProductionOrderService.getOrdersWithOrderingPartsStatus(true));}
+        else {
+            checkboxOrdering.setValue(false);
+            getAllElements();
+        }
     }
 
     private String delayCalcReadiness(String date, NewProductionOrder.OrderStatus orderStatus) {
