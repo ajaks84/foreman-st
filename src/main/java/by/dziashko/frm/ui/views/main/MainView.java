@@ -14,6 +14,7 @@ import by.dziashko.frm.ui.views.report.ReportView;
 import by.dziashko.frm.ui.views.sellers.SellersListView;
 import by.dziashko.frm.ui.views.service.ServiceView;
 import by.dziashko.frm.util.RandomNumberGenerator;
+import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
@@ -25,7 +26,6 @@ import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.html.Anchor;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.Image;
-import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -140,6 +140,8 @@ public class MainView extends AppLayout implements LocaleChangeObserver {
         tabs.add(createAccordion(getTranslation("Aspirator_elements"),false, false,links_3));
         tabs.add(createAccordion(getTranslation("Service"),false, false,links_4));
 
+        //tabs.addSelectedChangeListener(selectedChangeEvent -> miniTest(selectedChangeEvent));
+
         return tabs;
     }
 
@@ -155,8 +157,10 @@ public class MainView extends AppLayout implements LocaleChangeObserver {
         if (!selectedTab) {
             tbs.setSelectedTab(null);
         }
+
         // The listener doesn't work all the time. Probably I should add it to view?
-        tbs.addSelectedChangeListener(selectedChangeEvent -> miniTest(selectedChangeEvent.getSelectedTab()));
+        // If the tab in previous accordion has already been selected, and the you click it again, there would be no reaction
+        tbs.addSelectedChangeListener(selectedChangeEvent -> miniTest(selectedChangeEvent));
 
         accordion.add(accName, tbs);
         if (!open) {
@@ -166,13 +170,14 @@ public class MainView extends AppLayout implements LocaleChangeObserver {
         return accordion;
     }
 
-    private void miniTest(Tab tas){
-        if (currTab!=null){
-            System.out.println("currTab :"+ tas.toString());
+
+    private void miniTest(Tabs.SelectedChangeEvent tas) {
+
+        if (currTab != null) {
             currTab.setSelected(false);
         }
-        currTab=tas;
-        System.out.println("check :"+ tas.toString());
+        currTab = tas.getSelectedTab();
+        //currTab.setSelected(true);
     }
 
     private static Tab createTab(Component content) {

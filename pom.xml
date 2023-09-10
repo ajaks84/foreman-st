@@ -96,6 +96,11 @@
             <artifactId>google-api-services-sqladmin</artifactId>
             <version>v1-rev20211206-1.32.1</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-csv</artifactId>
+            <version>1.8</version>
+        </dependency>
 
         <!-- Vaadin dependencies -->
 
