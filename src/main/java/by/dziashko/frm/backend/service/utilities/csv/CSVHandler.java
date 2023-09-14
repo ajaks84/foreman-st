@@ -38,7 +38,7 @@ public class CSVHandler {
                 material.setQuantity(csvRecord.get(1));
                 material.setDescription(csvRecord.get(2));
                 material.setName(csvRecord.get(3));
-                material.setUnitPrice(csvRecord.get(4));
+                material.setEan(csvRecord.get(4));
 
                 materials.add(material);
             }

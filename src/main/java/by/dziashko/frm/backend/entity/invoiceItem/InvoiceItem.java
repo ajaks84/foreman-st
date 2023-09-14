@@ -17,6 +17,9 @@ public class InvoiceItem extends AbstractEntity implements Cloneable{
     private String categoryCode = "";
     private String taxAmount = "";
     private String netAmount = "";
+    private String fvNumber = "";
+    private String fvDate = "";
+    private String artNumber = "";
 
     public InvoiceItem() {
     }
@@ -101,19 +104,36 @@ public class InvoiceItem extends AbstractEntity implements Cloneable{
         this.netAmount = netAmount;
     }
 
+    public String getFvNumber() {
+        return fvNumber;
+    }
+
+    public void setFvNumber(String fvNumber) {
+        this.fvNumber = fvNumber;
+    }
+
+    public String getFvDate() {
+        return fvDate;
+    }
+
+    public void setFvDate(String fvDate) {
+        this.fvDate = fvDate;
+    }
+
+    public String getArtNumber() {
+        return artNumber;
+    }
+
+    public void setArtNumber(String artNumber) {
+        this.artNumber = artNumber;
+    }
+
     @Override
     public String toString() {
         return "InvoiceItem{" +
                 "ean='" + ean + '\'' +
                 ", description='" + description + '\'' +
-                ", type='" + type + '\'' +
-                ", quantity='" + quantity + '\'' +
-                ", unitOfMeasure='" + unitOfMeasure + '\'' +
-                ", netPrice='" + netPrice + '\'' +
-                ", taxRate='" + taxRate + '\'' +
-                ", categoryCode='" + categoryCode + '\'' +
-                ", taxAmount='" + taxAmount + '\'' +
-                ", netAmount='" + netAmount + '\'' +
+                ", fvNumber='" + fvNumber + '\'' +
                 '}';
     }
 }

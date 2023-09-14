@@ -27,14 +27,9 @@ public class MaterialService {
         return materialRepo.getByName(s);
     }
 
-//    public void save(Material material) {
-//        if (material == null) {
-//            LOGGER.log(Level.SEVERE,
-//                    "Material is null. Are you sure you have connected your form to the application?");
-//            return;
-//        }
-//        materialRepo.save(material);
-//    }
+    public List<Material> getByEan(String ean) {
+        return materialRepo.getByEan(ean);
+    }
 
     public void save(List<Material> materials) {
         materialRepo.saveAll(materials);

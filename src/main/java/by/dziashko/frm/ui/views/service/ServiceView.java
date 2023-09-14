@@ -64,6 +64,9 @@ public class ServiceView extends HorizontalLayout {
         Button clearSL = new Button("Clear seller DB");
         clearSL.addClickListener(event -> sellerService.deleteAll());
 
+        Button clearII = new Button("Clear Invoice items DB");
+        clearII.addClickListener(event -> invoiceItemService.deleteAll());
+
         MemoryBuffer memoryBufferCSV = new MemoryBuffer();
         Upload csvFileUpload = new Upload(memoryBufferCSV);
 
@@ -100,7 +103,7 @@ public class ServiceView extends HorizontalLayout {
             }
         });
 
-        add (get, clearPO, clearSL, csvFileUpload, xmlFileUpload);
+        add (get, clearPO, clearSL, clearII, csvFileUpload, xmlFileUpload);
     }
 
     private void processCSVFile(InputStream fileData, String fileName, long contentLength, String mimeType) {

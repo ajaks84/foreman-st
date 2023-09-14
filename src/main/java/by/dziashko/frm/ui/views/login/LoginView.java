@@ -18,7 +18,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 public class LoginView extends VerticalLayout { //implements BeforeEnterObserver {
 	public static final String ROUTE = "login";
 
-	private LoginOverlay login = new LoginOverlay();
+	private final LoginOverlay login = new LoginOverlay();
 
 	@Autowired
 	public LoginView(AuthenticationManager authenticationManager,
@@ -38,7 +38,8 @@ public class LoginView extends VerticalLayout { //implements BeforeEnterObserver
 				// if authentication was successful we will update the security context and redirect to the page requested first
 				SecurityContextHolder.getContext().setAuthentication(authentication); // (5)
 				login.close(); // (6)
-				UI.getCurrent().navigate(requestCache.resolveRedirectUrl()); // (7)
+				//UI.getCurrent().navigate(requestCache.resolveRedirectUrl()); // (7)
+				UI.getCurrent().navigate("orders");
 
 			} catch (AuthenticationException ex) { // (8)
 				// show default error message

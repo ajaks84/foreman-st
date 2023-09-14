@@ -10,7 +10,7 @@ public class Material extends AbstractEntity implements Cloneable{
     private String name = "";
     private String description = "";
     private String quantity = "";
-    private String unitPrice = "";
+    private String ean = "";
 
     public Material() {
     }
@@ -47,12 +47,12 @@ public class Material extends AbstractEntity implements Cloneable{
         this.quantity = quantity;
     }
 
-    public String getUnitPrice() {
-        return unitPrice;
+    public String getEan() {
+        return ean;
     }
 
-    public void setUnitPrice(String unitPrice) {
-        this.unitPrice = unitPrice;
+    public void setEan(String ean) {
+        this.ean = ean;
     }
 
     @Override
@@ -62,7 +62,7 @@ public class Material extends AbstractEntity implements Cloneable{
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
                 ", quantity='" + quantity + '\'' +
-                ", unitPrice='" + unitPrice + '\'' +
+                ", EAN='" + ean + '\'' +
                 '}';
     }
 }

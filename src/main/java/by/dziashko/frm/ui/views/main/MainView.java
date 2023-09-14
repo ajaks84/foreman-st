@@ -14,7 +14,6 @@ import by.dziashko.frm.ui.views.report.ReportView;
 import by.dziashko.frm.ui.views.sellers.SellersListView;
 import by.dziashko.frm.ui.views.service.ServiceView;
 import by.dziashko.frm.util.RandomNumberGenerator;
-import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Text;
 import com.vaadin.flow.component.UI;
@@ -160,7 +159,7 @@ public class MainView extends AppLayout implements LocaleChangeObserver {
 
         // The listener doesn't work all the time. Probably I should add it to view?
         // If the tab in previous accordion has already been selected, and the you click it again, there would be no reaction
-        tbs.addSelectedChangeListener(selectedChangeEvent -> miniTest(selectedChangeEvent));
+        tbs.addSelectedChangeListener(selectedChangeEvent -> deselectTab(selectedChangeEvent));
 
         accordion.add(accName, tbs);
         if (!open) {
@@ -170,14 +169,12 @@ public class MainView extends AppLayout implements LocaleChangeObserver {
         return accordion;
     }
 
-
-    private void miniTest(Tabs.SelectedChangeEvent tas) {
+    private void deselectTab(Tabs.SelectedChangeEvent tas) {
 
         if (currTab != null) {
             currTab.setSelected(false);
         }
         currTab = tas.getSelectedTab();
-        //currTab.setSelected(true);
     }
 
     private static Tab createTab(Component content) {
