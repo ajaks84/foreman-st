@@ -13,6 +13,7 @@ import by.dziashko.frm.ui.views.orders.ProductionOrderView;
 import by.dziashko.frm.ui.views.report.ReportView;
 import by.dziashko.frm.ui.views.sellers.SellersListView;
 import by.dziashko.frm.ui.views.service.ServiceView;
+import by.dziashko.frm.ui.views.warehouse.WarehouseView;
 import by.dziashko.frm.util.RandomNumberGenerator;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Text;
@@ -56,7 +57,6 @@ public class MainView extends AppLayout implements LocaleChangeObserver {
 
     private final Tabs menu;
     private H1 viewTitle;
-    private Tab currTab;
 
     private final Component[] links_1 = new RouterLink[]{ new RouterLink(getTranslation("Orders_old"), ProductionOrderView.class),
                                             new RouterLink(getTranslation("Orders_new"), NewProductionOrderView.class) };
@@ -71,6 +71,8 @@ public class MainView extends AppLayout implements LocaleChangeObserver {
     private final Component[] links_4 = new RouterLink[]{ new RouterLink(getTranslation("Sellers_List"), SellersListView.class),
                                             new RouterLink(getTranslation("Report"), ReportView.class),
                                             new RouterLink(getTranslation("Service"), ServiceView.class) };
+    private final Component[] links_5 = new RouterLink[]{ new RouterLink(getTranslation("Warehouse"), WarehouseView.class)};
+
     public MainView() {
         setPrimarySection(Section.DRAWER);
         addToNavbar(true, createHeaderContent());
@@ -80,6 +82,12 @@ public class MainView extends AppLayout implements LocaleChangeObserver {
 
     private Component createHeaderContent() {
         HorizontalLayout layout = new HorizontalLayout();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) authentication.getPrincipal();
+        Anchor logout = new Anchor("logout", getTranslation("logout"));
+        Tab tab_1 = new Tab("");
+        Tab tab_2 = new Tab("");
+
         layout.setId("header");
         layout.getThemeList().set("dark", true);
         layout.setWidthFull();
@@ -88,58 +96,50 @@ public class MainView extends AppLayout implements LocaleChangeObserver {
         layout.add(new DrawerToggle());
         viewTitle = new H1();
         layout.add(viewTitle);
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = (User) authentication.getPrincipal();
-        String username = user.getUsername();
-        Text text = new Text(username);
-//        layout.add(new Image("images/user.svg", "Avatar"));
-        int number = new RandomNumberGenerator().getRandomOneToThree();
-        layout.add(new Image("images/user_"+number+".png", "Avatar"));
-        Tab tab1 = new Tab("");
-        tab1.setEnabled(false);
-        layout.add(text,tab1);
-        H1 logo = new H1("Foreman");
-        logo.addClassName("logo");
-        Anchor logout = new Anchor("logout", getTranslation("logout"));
+        layout.add(new Image("images/user_"+new RandomNumberGenerator().getRandomOneToThree()+".png", "Avatar"));
+        tab_1.setEnabled(false);
+        tab_2.setEnabled(false);
+        layout.add(new Text(user.getUsername()),tab_1);
         layout.addClassName("logo");
         layout.add(logout);
-        Tab tab = new Tab("");
-        tab.setEnabled(false);
-        layout.add(tab);
+        layout.add(tab_2);
 
         return layout;
     }
 
     private Component createDrawerContent(Tabs menu) {
         VerticalLayout layout = new VerticalLayout();
+        HorizontalLayout logoLayout = new HorizontalLayout();
+
+        logoLayout.setId("logo");
+        logoLayout.setAlignItems(FlexComponent.Alignment.CENTER);
+        logoLayout.add(new Image("images/logo.png", "foreman logo"));
+        logoLayout.add(new H1(getTranslation("foreman")));
+
         layout.setSizeFull();
         layout.setPadding(false);
         layout.setSpacing(false);
         layout.getThemeList().set("spacing-s", true);
         layout.setAlignItems(FlexComponent.Alignment.STRETCH);
-        HorizontalLayout logoLayout = new HorizontalLayout();
-        logoLayout.setId("logo");
-        logoLayout.setAlignItems(FlexComponent.Alignment.CENTER);
-        logoLayout.add(new Image("images/logo.png", "foreman logo"));
-        logoLayout.add(new H1(getTranslation("foreman")));
         layout.add(logoLayout, menu);
+
         return layout;
     }
 
     private Tabs createMenu() {
         final Tabs tabs = new Tabs();
+        Tab tb = new Tab();
+
+        tb.setEnabled(false);
         tabs.setOrientation(Tabs.Orientation.VERTICAL);
         tabs.addThemeVariants(TabsVariant.LUMO_MINIMAL);
         tabs.setId("tabs");
-        Tab tb = new Tab();
-        tb.setEnabled(false);
         tabs.add(tb);
         tabs.add(createAccordion(getTranslation("Orders"),true, true,links_1));
         tabs.add(createAccordion(getTranslation("Prod_order_elements"),false, false,links_2));
         tabs.add(createAccordion(getTranslation("Aspirator_elements"),false, false,links_3));
         tabs.add(createAccordion(getTranslation("Service"),false, false,links_4));
-
-        //tabs.addSelectedChangeListener(selectedChangeEvent -> miniTest(selectedChangeEvent));
+        tabs.add(createAccordion(getTranslation("Warehouse"),false, false,links_5));
 
         return tabs;
     }
@@ -147,19 +147,13 @@ public class MainView extends AppLayout implements LocaleChangeObserver {
     private Accordion createAccordion(String accName, boolean open, boolean selectedTab, Component[] links){
         Accordion accordion = new Accordion();
         Tabs tbs = new Tabs();
+
         tbs.setId("tabs");
         tbs.setOrientation(Tabs.Orientation.VERTICAL);
         tbs.addThemeVariants(TabsVariant.LUMO_MINIMAL);
-
         tbs.add(Arrays.stream(links).map(MainView::createTab).toArray(Tab[]::new));
-
-        if (!selectedTab) {
-            tbs.setSelectedTab(null);
-        }
-
-        // The listener doesn't work all the time. Probably I should add it to view?
-        // If the tab in previous accordion has already been selected, and the you click it again, there would be no reaction
-        tbs.addSelectedChangeListener(selectedChangeEvent -> deselectTab(selectedChangeEvent));
+        tbs.setSelectedTab(null);
+        //tbs.addSelectedChangeListener(selectedChangeEvent -> tbs.setSelectedTab(null));
 
         accordion.add(accName, tbs);
         if (!open) {
@@ -167,14 +161,6 @@ public class MainView extends AppLayout implements LocaleChangeObserver {
         }
 
         return accordion;
-    }
-
-    private void deselectTab(Tabs.SelectedChangeEvent tas) {
-
-        if (currTab != null) {
-            currTab.setSelected(false);
-        }
-        currTab = tas.getSelectedTab();
     }
 
     private static Tab createTab(Component content) {
@@ -190,16 +176,16 @@ public class MainView extends AppLayout implements LocaleChangeObserver {
     }
 
     private void updateChrome() {
-        getTabWithCurrentRoute().ifPresent(menu::setSelectedTab);
+        //getTabWithCurrentRoute().ifPresent(menu::setSelectedTab);
         viewTitle.setText(getCurrentPageTitle());
     }
 
-    private Optional<Tab> getTabWithCurrentRoute() {
-        String currentRoute = RouteConfiguration.forSessionScope()
-                .getUrl(getContent().getClass());
-        return menu.getChildren().filter(tab -> hasLink(tab, currentRoute))
-                .findFirst().map(Tab.class::cast);
-    }
+//    private Optional<Tab> getTabWithCurrentRoute() {
+//        String currentRoute = RouteConfiguration.forSessionScope()
+//                .getUrl(getContent().getClass());
+//        return menu.getChildren().filter(tab -> hasLink(tab, currentRoute))
+//                .findFirst().map(Tab.class::cast);
+//    }
 
     private boolean hasLink(Component tab, String currentRoute) {
         return tab.getChildren().filter(RouterLink.class::isInstance)
