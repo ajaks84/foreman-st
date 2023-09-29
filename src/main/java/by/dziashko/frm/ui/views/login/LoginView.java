@@ -27,6 +27,7 @@ public class LoginView extends VerticalLayout { //implements BeforeEnterObserver
 		login.setOpened(true);
 		login.setTitle(getTranslation("foreman"));
 		login.setDescription("");
+		login.setForgotPasswordButtonVisible(false);
 		add(login);
 
 		login.addLoginListener(e -> { // (3)

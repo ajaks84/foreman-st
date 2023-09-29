@@ -66,9 +66,7 @@ public class ThreadPoolTaskSchedulerImpl {
             try {
                 googleSheetsReaderService.getSheetsData();
                 newGoogleSheetsReaderService.getSheetData();
-            } catch (GeneralSecurityException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
+            } catch (GeneralSecurityException | IOException e) {
                 e.printStackTrace();
             }
             System.out.println("Lectura de datos OK");
@@ -83,7 +81,7 @@ public class ThreadPoolTaskSchedulerImpl {
             for (InvoiceItem invoiceItem : invoiceItems) {
                 String ean = invoiceItem.getEan();
                 try {
-                    invoiceItem.setArtNumber(materialService.getByEan(ean).get(0).getEan());
+                    invoiceItem.setArtNumber(materialService.getByEan(ean).get(0).getName());
 
                 }
                 catch (Exception error){

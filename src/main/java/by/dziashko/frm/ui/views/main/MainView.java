@@ -57,6 +57,7 @@ public class MainView extends AppLayout implements LocaleChangeObserver {
 
     private final Tabs menu;
     private H1 viewTitle;
+    private Tab previousTab;
 
     private final Component[] links_1 = new RouterLink[]{ new RouterLink(getTranslation("Orders_old"), ProductionOrderView.class),
                                             new RouterLink(getTranslation("Orders_new"), NewProductionOrderView.class) };
@@ -153,7 +154,7 @@ public class MainView extends AppLayout implements LocaleChangeObserver {
         tbs.addThemeVariants(TabsVariant.LUMO_MINIMAL);
         tbs.add(Arrays.stream(links).map(MainView::createTab).toArray(Tab[]::new));
         tbs.setSelectedTab(null);
-        //tbs.addSelectedChangeListener(selectedChangeEvent -> tbs.setSelectedTab(null));
+        tbs.addSelectedChangeListener(selectedChangeEvent -> tbs.setSelectedTab(null));
 
         accordion.add(accName, tbs);
         if (!open) {
@@ -176,16 +177,16 @@ public class MainView extends AppLayout implements LocaleChangeObserver {
     }
 
     private void updateChrome() {
-        //getTabWithCurrentRoute().ifPresent(menu::setSelectedTab);
+        getTabWithCurrentRoute().ifPresent(menu::setSelectedTab);
         viewTitle.setText(getCurrentPageTitle());
     }
 
-//    private Optional<Tab> getTabWithCurrentRoute() {
-//        String currentRoute = RouteConfiguration.forSessionScope()
-//                .getUrl(getContent().getClass());
-//        return menu.getChildren().filter(tab -> hasLink(tab, currentRoute))
-//                .findFirst().map(Tab.class::cast);
-//    }
+    private Optional<Tab> getTabWithCurrentRoute() {
+        String currentRoute = RouteConfiguration.forSessionScope()
+                .getUrl(getContent().getClass());
+        return menu.getChildren().filter(tab -> hasLink(tab, currentRoute))
+                .findFirst().map(Tab.class::cast);
+    }
 
     private boolean hasLink(Component tab, String currentRoute) {
         return tab.getChildren().filter(RouterLink.class::isInstance)

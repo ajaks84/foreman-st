@@ -1,11 +1,11 @@
 package by.dziashko.frm.ui.views.warehouse;
 
 import by.dziashko.frm.backend.entity.invoiceItem.InvoiceItem;
-import by.dziashko.frm.backend.entity.productionOrder.ProductionOrder;
-import by.dziashko.frm.backend.entity.productionOrder.Seller;
 import by.dziashko.frm.backend.service.invoiceItem.InvoiceItemService;
+import by.dziashko.frm.ui.forms.warehouse.WarehouseForm;
 import by.dziashko.frm.ui.views.main.MainView;
 import com.vaadin.flow.component.UI;
+import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.grid.Grid;
@@ -15,7 +15,6 @@ import com.vaadin.flow.i18n.LocaleChangeEvent;
 import com.vaadin.flow.i18n.LocaleChangeObserver;
 import com.vaadin.flow.router.Route;
 import org.springframework.context.annotation.Scope;
-
 import java.io.Serializable;
 
 @Scope("prototype")
@@ -26,6 +25,8 @@ public class WarehouseView extends VerticalLayout implements Serializable, Local
 
     InvoiceItemService invoiceItemService;
     Grid<InvoiceItem> grid = new Grid<>(InvoiceItem.class);
+    WarehouseForm form;
+    Checkbox checkbox = new Checkbox();
 
     public WarehouseView(InvoiceItemService invoiceItemService) {
         this.invoiceItemService = invoiceItemService;
@@ -37,10 +38,14 @@ public class WarehouseView extends VerticalLayout implements Serializable, Local
         setSizeFull();
         configureGrid();
 
-        Div content = new Div(grid);
+        form = new WarehouseForm();
+
+        Div content = new Div(grid,form);
         content.addClassName("content");
         content.setSizeFull();
         add(content);
+
+        closeEditor();
 
     }
 
@@ -64,6 +69,12 @@ public class WarehouseView extends VerticalLayout implements Serializable, Local
 
     private String setCorrectUoM(String uom){
         return "pcs.";
+    }
+
+    private void closeEditor() {
+//        form.setProductionOrder(null);
+        form.setVisible(false);
+        removeClassName("editing");
     }
 
     @Override
