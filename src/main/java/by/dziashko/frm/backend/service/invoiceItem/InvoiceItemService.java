@@ -1,6 +1,7 @@
 package by.dziashko.frm.backend.service.invoiceItem;
 
 import by.dziashko.frm.backend.entity.invoiceItem.InvoiceItem;
+import by.dziashko.frm.backend.entity.newProductionOrder.NewProductionOrder;
 import by.dziashko.frm.backend.repo.invoiceItem.InvoiceItemRepo;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -18,6 +19,14 @@ public class InvoiceItemService {
 
     public List<InvoiceItem> findAll() {
         return invoiceItemRepo.findAll();
+    }
+
+    public List<InvoiceItem> findAll(String stringFilter) {
+        if (stringFilter == null || stringFilter.isEmpty()) {
+            return invoiceItemRepo.findAll();
+        } else {
+            return invoiceItemRepo.search(stringFilter);
+        }
     }
 
     public InvoiceItem find(String s) {

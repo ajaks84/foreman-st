@@ -34,6 +34,7 @@ public class OrderStatusNameHandlerService {
         if (orderStatus.contentEquals("Instalacja/Szkolenie")) return NewProductionOrder.OrderStatus.Installation;
         if (orderStatus.contentEquals("Zakończone")) return NewProductionOrder.OrderStatus.Ended;
         if (orderStatus.contentEquals("Wstrzymane!")) return NewProductionOrder.OrderStatus.OnHold;
+        if (orderStatus.contentEquals("Analiza")) return NewProductionOrder.OrderStatus.Analyze;
 
         return null;
     }
@@ -49,20 +50,8 @@ public class OrderStatusNameHandlerService {
         if (orderStatus==NewProductionOrder.OrderStatus.Installation) return "Instalacja/Szkolenie";
         if (orderStatus==NewProductionOrder.OrderStatus.Ended) return "Zakończone";
         if (orderStatus==NewProductionOrder.OrderStatus.OnHold) return "Wstrzymane!";
-        return "";
-    }
+        if (orderStatus==NewProductionOrder.OrderStatus.Analyze) return "Analiza";
 
-    public String normalizeOrderStatusName(String orderStatus ){
-        if (orderStatus=="New") return "Nowe";
-        if (orderStatus=="AcceptedForProduction") return "Przyjęte do realizacji";
-        if (orderStatus=="Designing") return "Projektowanie";
-        if (orderStatus=="OrderingParts") return "Zamawianie elementów";
-        if (orderStatus=="ReadyForAssemble") return "Gotowość do montażu";
-        if (orderStatus=="Assembling") return "Montaż";
-        if (orderStatus=="ReadyForDispatch") return "Gotowe do wysyłki";
-        if (orderStatus=="Installation") return "Instalacja/Szkolenie";
-        if (orderStatus=="Ended") return "Zakończone";
-        if (orderStatus=="OnHold") return "Wstrzymane!";
         return "";
     }
 }

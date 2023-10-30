@@ -12,6 +12,7 @@ import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.dependency.CssImport;
 import com.vaadin.flow.component.dependency.HtmlImport;
 import com.vaadin.flow.component.grid.Grid;
+import com.vaadin.flow.component.grid.GridVariant;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -77,7 +78,7 @@ public class NewProductionOrderView extends VerticalLayout implements Serializab
         grid.addClassName("contact-grid");
         grid.setSizeFull();
         grid.setColumns();
-        grid.addColumn(NewProductionOrder::getClient).setHeader(getTranslation("Client"));
+        grid.addColumn(NewProductionOrder::getClient).setHeader(getTranslation("Client")).setKey("Client");
         grid.addColumn(NewProductionOrder::getProjectNumber).setHeader(getTranslation("Project_Number"));
         grid.addColumn(orderName -> {
             ResponsiblePerson responsiblePerson = orderName.getResponsiblePerson();
@@ -90,7 +91,9 @@ public class NewProductionOrderView extends VerticalLayout implements Serializab
         grid.addColumn(NewProductionOrder::getPlanedDispatchDate).setHeader(getTranslation("Planed_Dispatch_Date"));
         grid.addColumn(NewProductionOrder::getPlanedOrderCompletionDate).setHeader(getTranslation("Planed_Order_Compl_Date"));
         grid.addColumn(newProductionOrder -> normalizeOrderStatusName(newProductionOrder.getOrderStatus())).setHeader(getTranslation("Order_Status")).setSortable(true);
-        grid.getColumns().forEach(col -> col.setAutoWidth(true));
+        grid.getColumnByKey("Client").setWidth("15%");
+        grid.addThemeVariants(GridVariant.LUMO_COLUMN_BORDERS);
+        grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
         grid.addItemClickListener(event -> navigateTo(event.getItem()));
         getAllElements();
     }

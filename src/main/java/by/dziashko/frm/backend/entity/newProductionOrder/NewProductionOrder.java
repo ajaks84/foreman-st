@@ -15,6 +15,7 @@ public class NewProductionOrder extends AbstractEntity implements Cloneable {
                             OrderingParts("Zamawianie elementów"),
                             ReadyForAssemble("Gotowość do montażu"),
                             Assembling("Montaż"),
+                            Analyze("Analiza"),
                             ReadyForDispatch("Gotowe do wysyłki"),
                             Installation("Instalacja/Szkolenie"),
                             Ended("Zakończone"),
